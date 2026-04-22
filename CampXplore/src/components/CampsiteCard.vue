@@ -9,7 +9,7 @@
                         <p>{{ campsite.description }}</p>
                     </div>
                     <div class="col-md-4">
-                        <p>{{ campsite.type }}</p>
+                        <p>Type: {{ campsite.type }}</p>
                         <p>Prix par nuit: {{ campsite.pricePerNight }}</p>
                         <p>Capacité: {{ campsite.capacity }}</p>
                     </div>
@@ -22,7 +22,7 @@
                     </li>
                 </ul>
                 <div>
-                    <RouterLink :to="{name: 'CampsitesDetails', params: {id: campsite._id}}">Réserver</RouterLink>
+                    <RouterLink class="btn btn-primary position-absolute bottom-0 end-0 m-3" :to="{name: 'CampsitesDetails', params: {id: campsite._id}}">Réserver</RouterLink>
                 </div>
             </div>
         </div>
