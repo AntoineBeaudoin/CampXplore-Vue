@@ -1,5 +1,5 @@
 <template>
-    <div class="col-md-6 col-lg-4">
+    <div class="col">
         <div class="card shadow-sm h-100">
             <div class="card-body">
                 <h2>{{ campsite.name }}</h2>
@@ -12,6 +12,7 @@
                         <p>Type: {{ campsite.type }}</p>
                         <p>Prix par nuit: {{ campsite.pricePerNight }}</p>
                         <p>Capacité: {{ campsite.capacity }}</p>
+                        <p v-if="campsite.type === 'vr'">Longuer maximale du vr: {{ campsite.maxVehicleLength }}</p>
                     </div>
                 </div>
                 <ul class="m-0 p-0">
