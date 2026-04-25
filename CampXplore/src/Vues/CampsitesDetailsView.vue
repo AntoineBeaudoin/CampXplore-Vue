@@ -5,6 +5,8 @@
 <script setup>
     import {onMounted, ref} from 'vue';
     import CampsiteCard from '@/components/CampsiteCard.vue';
+    const API_BASE = import.meta.env.VITE_API_URL;
+    const API_KEY = import.meta.env.VITE_API_KEY;
     const campsite = ref({});
 
     const props = defineProps({
@@ -15,12 +17,12 @@
     })
 
     const getCampsite = async (id) => {
-        let url = 'https://420-15d-fx-h26-tp3.vercel.app/api/campsites/' + id;
+        let url = API_BASE + '/api/campsites/' + id;
         try {
             const res = await fetch(url, {
             method: 'GET',
             headers: {
-                'x-api-key': '85a212d5ab6f2002e461b8f72de5a6b36d8f47e84c373e2032365f058caeaa6a'
+                'x-api-key': API_KEY
             }
             });
             if (!res.ok){
