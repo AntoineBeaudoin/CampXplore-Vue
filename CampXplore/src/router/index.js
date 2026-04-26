@@ -23,6 +23,12 @@ const router = createRouter({
       name: "CampsitesDetails",
       component: () => import('@/Vues/CampsitesDetailsView.vue'),
       props: true
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'NotFound',
+      component: () => import('@/Vues/NotFoundView.vue'),
+      meta: {title: "Page introuvable"}
     }
   ],
 })
