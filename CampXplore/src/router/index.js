@@ -29,6 +29,18 @@ const router = createRouter({
       meta: {title: "Détails d'un campsite"},
     },
     {
+      path: "/login",
+      name: "login",
+      component: () => import('@/Vues/LoginView.vue'),
+      meta: {title: "Se connecter"},
+    },
+    {
+      path: "/register",
+      name: "register",
+      component: () => import('@/Vues/RegisterView.vue'),
+      meta: {title: "S'inscrire"},
+    },
+    {
       path: '/:pathMatch(.*)*',
       name: 'NotFound',
       component: () => import('@/Vues/NotFoundView.vue'),
@@ -48,6 +60,14 @@ const router = createRouter({
     })
   }
 })
+
+router.beforeEach((to, from, next) => {
+  const isLogged = localStorage.getItem('token');
+  if (to.meta.requireAuth && !isLogged){
+    next({name: "login", query: {redirect: to.fullPath}});
+  }
+  next();
+});
 
 router.afterEach((to, from, next) => {
   if (to.meta?.title){
