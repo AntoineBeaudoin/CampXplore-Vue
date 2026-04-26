@@ -35,6 +35,18 @@ const router = createRouter({
       meta: {title: "Page introuvable"},
     }
   ],
+  scrollBehavior(to, from, savedPosition){
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        if(savedPosition){
+          resolve(savedPosition);
+        }
+        else{
+          resolve({left: 0, top: 0});
+        }
+      }, 500);
+    })
+  }
 })
 
 router.afterEach((to, from, next) => {
