@@ -40,6 +40,7 @@
   </div>
   <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
       <p v-if="isLoading">Chargement en cours...</p>
+      <p v-else-if="errorMessage" class="col-12 text-danger">{{ errorMessage }}</p>
       <p v-else-if="campsites.length === 0" class="col-12">Aucun campsite</p>
       <CampsiteCard v-for="campsite in campsites" :key="campsite._id" :campsite="campsite"></CampsiteCard>
   </div>
@@ -48,10 +49,11 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 import CampsiteCard from '@/components/CampsiteCard.vue';
-import { apiFetch } from '@/utils/apiFetch.js';
+import { useCampsitesStore } from '@/stores/campsites.js';
+import { storeToRefs } from 'pinia';
 
-const campsites = ref([]);
-const isLoading = ref(false);
+const store = useCampsitesStore();
+const { isLoading, campsites, errorMessage } = storeToRefs(store);
 
 const dateDebut = ref('');
 const dateFin = ref('');
@@ -64,23 +66,6 @@ const nbPlacesMinIsNotValid = ref(false);
 
 const dateDebutErrorMessage = ref('');
 const dateFinErrorMessage = ref('');
-
-const getCampsites = async () => {
-  try {
-    isLoading.value = true;
-
-    const fetched = await apiFetch('/api/campsites', {
-      method: 'GET',
-      headers: {}
-    });
-    campsites.value = fetched.data;
-  } catch (err) {
-    console.log('Error ', err);
-  }
-  finally{
-    isLoading.value = false;
-  }
-}
 
 function validateForm() {
   let isValid = true;
@@ -110,6 +95,6 @@ function submitForm() {
 }
 
 onMounted(() => {
-  getCampsites();
+  store.getCampsites();
 })
 </script>
