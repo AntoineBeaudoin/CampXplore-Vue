@@ -19,39 +19,26 @@
 </template>
 
 <script setup>
-    import {ref} from 'vue';
-    import { useRouter, useRoute } from 'vue-router';
-    const API_BASE = import.meta.env.VITE_API_URL;
-    const API_KEY = import.meta.env.VITE_API_KEY;
+import { useRouter, useRoute } from 'vue-router';
+import { useAuthStore } from '@/stores/auth.js';
+import { storeToRefs } from 'pinia';
 
-    const route = useRoute();
-    const router = useRouter();
-    const email = ref('');
-    const pwd = ref('');
-    const errorMessage = ref('');
+const store = useAuthStore();
+const { email, pwd, errorMessage } = storeToRefs(store);
 
-    async function login() {
-        try {
-            const resp = await fetch( API_BASE + '/api/auth/login', {
-                method: 'POST',
-                headers: {
-                    'Content-type': 'application/json', 
-                    'x-api-key': API_KEY
-                },
-                body: JSON.stringify({email: email.value, password: pwd.value})
-            });
-            const data = await resp.json();
-            if (!resp.ok){
-                errorMessage.value = "Nom d'utilisateur ou mot de passe non valide";
-            }
-            else{
-                localStorage.setItem('token', data.token);
-                const redirectTo = route.query.redirect || '/';
-                router.push(redirectTo);
-            }
-        } catch (err) {
-            errorMessage.value = "Erreur de connexion";
-            console.log("Err ", err);
+const route = useRoute();
+const router = useRouter();
+
+async function login() {
+    try {
+        await store.login();
+        if(errorMessage.value === ''){
+            const redirectTo = route.query.redirect || '/';
+            await router.push(redirectTo);
         }
     }
+    catch {
+        errorMessage.value = "Erreur de connexion";
+    }
+}
 </script>
