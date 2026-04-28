@@ -1,12 +1,17 @@
 <template>
+    <p v-if="isLoading">Chargement en cours...</p>
+    <p v-else-if="errorMessage" class="col-12 text-danger">{{ errorMessage }}</p>
     <CampsiteCard :campsite="campsite"></CampsiteCard>
 </template>
 
 <script setup>
-    import {onMounted, ref} from 'vue';
+    import {onMounted} from 'vue';
     import CampsiteCard from '@/components/CampsiteCard.vue';
-    import { apiFetch } from '@/utils/apiFetch.js';
-    const campsite = ref({});
+    import { useCampsitesStore } from '@/stores/campsites.js';
+    import { storeToRefs } from 'pinia';
+
+    const store = useCampsitesStore();
+    const { isLoading, campsite, errorMessage } = storeToRefs(store);
 
     const props = defineProps({
         id: {
@@ -15,20 +20,7 @@
         }
     })
 
-    const getCampsite = async (id) => {
-        try {
-            const fetched = await apiFetch('/api/campsites/' + id, {
-                method: 'GET',
-                headers: {}
-            });
-
-            campsite.value = fetched.data;
-        } catch (err) {
-            console.log('Error ',err);
-        }
-    }
-
     onMounted(() => {
-        getCampsite(props.id);
+        store.getCampsite(props.id);
     })
 </script>
