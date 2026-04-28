@@ -5,8 +5,7 @@
 <script setup>
     import {onMounted, ref} from 'vue';
     import CampsiteCard from '@/components/CampsiteCard.vue';
-    const API_BASE = import.meta.env.VITE_API_URL;
-    const API_KEY = import.meta.env.VITE_API_KEY;
+    import { apiFetch } from '@/utils/apiFetch.js';
     const campsite = ref({});
 
     const props = defineProps({
@@ -17,19 +16,13 @@
     })
 
     const getCampsite = async (id) => {
-        let url = API_BASE + '/api/campsites/' + id;
         try {
-            const res = await fetch(url, {
-            method: 'GET',
-            headers: {
-                'x-api-key': API_KEY
-            }
+            const fetched = await apiFetch('/api/campsites/' + id, {
+                method: 'GET',
+                headers: {}
             });
-            if (!res.ok){
-                throw new Error(`HTTP ${res.status}`);
-            }
-            const data = await res.json();
-            campsite.value = data.data;
+
+            campsite.value = fetched.data;
         } catch (err) {
             console.log('Error ',err);
         }

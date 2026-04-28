@@ -48,8 +48,7 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 import CampsiteCard from '@/components/CampsiteCard.vue';
-const API_BASE = import.meta.env.VITE_API_URL;
-const API_KEY = import.meta.env.VITE_API_KEY;
+import { apiFetch } from '@/utils/apiFetch.js';
 
 const campsites = ref([]);
 const isLoading = ref(false);
@@ -67,22 +66,14 @@ const dateDebutErrorMessage = ref('');
 const dateFinErrorMessage = ref('');
 
 const getCampsites = async () => {
-  let url = API_BASE + '/api/campsites';
-
   try {
     isLoading.value = true;
-    const res = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'x-api-key': API_KEY
-      }
-    });
 
-    if (!res.ok) {
-      throw new Error(`HTTP ${res.status}`);
-    }
-    const data = await res.json();
-    campsites.value = data.data;
+    const fetched = await apiFetch('/api/campsites', {
+      method: 'GET',
+      headers: {}
+    });
+    campsites.value = fetched.data;
   } catch (err) {
     console.log('Error ', err);
   }
