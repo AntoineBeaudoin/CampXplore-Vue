@@ -72,11 +72,11 @@ export const useCampsitesStore = defineStore('campsites', () => {
       const fin = new Date(dateFin.value);
       if (debut < aujourdHui){
         isValid = false; 
-        dateDebutErrorMessage.value = "La date d'arrivée doit être plus tard que la date d'aujourd'hui"
+        dateDebutErrorMessage.value = "La date d'arrivée doit être plus tard que la date d'aujourd'hui";
       }
       if (fin < debut){
         isValid = false; 
-        dateFinErrorMessage.value = "La date de départ doit être plus tard que la date d'arrivée"
+        dateFinErrorMessage.value = "La date de départ doit être plus tard que la date d'arrivée";
       }
     }
     return isValid;
@@ -107,8 +107,30 @@ export const useCampsitesStore = defineStore('campsites', () => {
         url = url + `&guests=${nbPlacesMin.value}`;
       }
       if (typeCampsite.value){
-        url = url + `&type=${typeCampsite.value}`
+        url = url + `&type=${typeCampsite.value}`;
       }
+    }
+    try {
+      isLoading.value = true;
+      errorMessage.value = "Une erreur s'est produite lors du chargement du site";
+
+      const fetched = await apiFetch(url, {
+        method: 'GET',
+        headers: {}
+      });
+      campsites.value = fetched.data;
+    } catch (err) {
+      errorMessage.value = "Une erreure s'est produite lors du chargement du site";
+    }
+    finally{
+      isLoading.value = false;
+    }
+  }
+
+  async function getCampsitesFiltre() {
+    let url = '/api/campsites';
+    if (typeCampsite.value){
+      url = url + `?type=${typeCampsite.value}`;
     }
     try {
       isLoading.value = true;
@@ -140,6 +162,7 @@ export const useCampsitesStore = defineStore('campsites', () => {
     dateDebutErrorMessage,
     dateFinErrorMessage,
     nbPlacesMinErrorMessage,
-    getCampsitesRecherche
+    getCampsitesRecherche,
+    getCampsitesFiltre
   }
 })

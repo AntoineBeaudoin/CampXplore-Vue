@@ -1,40 +1,27 @@
 <template>
   <h1 class="text-center">Liste des campsites</h1>
   <div class=" border rounded text-align-center p-3">
-    <h2>Trouver un camping</h2>
+    <h2>Filtrer les campsites</h2>
     <form id="formulaire-filtre" class="mb-4" @submit.prevent="">
-      <div class="row">
-          <div class="col-md-3 p-3">
-            <div>
-              <label for="dateDebut" class="form-label">Date d'arrivée:</label>
-              <input type="date" id="dateDebut" name="dateDebut" class="form-control" v-model.trim="dateDebut">
-              <div v-if="dateDebutErrorMessage" class="text-danger">{{ dateDebutErrorMessage }}</div>
-            </div>
-          </div>
-          <div class="col-md-3 p-3">
-            <div>
-              <label for="dateFin" class="form-label">Date de départ:</label>
-              <input type="date" id="dateFin" name="dateFin" class="form-control" v-model.trim="dateFin">
-              <div v-if="dateFinErrorMessage" class="text-danger">{{ dateFinErrorMessage }}</div>
-            </div>
-          </div>
-          <div class="col-md-3 p-3">
-            <div>
-              <label for="nb_places_min" class="form-label">Nombre de personnes:</label>
-              <input type="number" id="nb_places_min" name="nb_places_min" class="form-control" v-model.trim="nbPlacesMin">
-              <div v-if="nbPlacesMinErrorMessage" class="text-danger">{{ nbPlacesMinErrorMessage }}</div>
-            </div>
-          </div>
-          <div class="col-md-3 p-3">
+      <div class="d-flex align-items-end">
+          <div class="">
             <div>
               <label for="type" class="form-label">Type de site de camp:</label>
-              <input type="text" id="type" name="type" class="form-control" v-model.trim="typeCampsite">
+              <select id="type" name="type" class="form-control" v-model="typeCampsite">
+                  <option value="">-- Sélectionner un type --</option>
+                  <option value="tente">Tente</option>
+                  <option value="vr">VR</option>
+                  <option value="chalet">Chalet</option>
+                  <option value="glamping">Glamping</option>
+                  <option value="arrière-pays">Arrière-pays</option>
+                  <option value="autre">Autre</option>
+              </select>
             </div>
           </div>
-      </div>
-      <div class="d-flex justify-content-between align-items-center">
-        <button type="submit" class="btn btn-primary" @click="submitForm">Rechercher</button>
-        <button type="button" id="btn-reset" class="btn btn-danger" @click="resetForm">Réinitialiser</button>
+          <div class="ms-3">
+            <button type="submit" class="btn btn-primary me-3" @click="submitForm">Rechercher</button>
+            <button type="button" id="btn-reset" class="btn btn-danger" @click="resetForm">Réinitialiser</button>
+          </div>
       </div>
     </form>
   </div>
@@ -56,25 +43,17 @@ const store = useCampsitesStore();
 const { 
   isLoading, 
   campsites, 
-  errorMessage,dateDebut,
-  dateFin,
-  nbPlacesMin,
-  typeCampsite,
-  dateDebutErrorMessage,
-  dateFinErrorMessage,
-  nbPlacesMinErrorMessage 
+  errorMessage,
+  typeCampsite
 } = storeToRefs(store);
 
 const resetForm = async () => {
-  dateDebut.value = '';
-  dateFin.value = '';
-  nbPlacesMin.value = '';
   typeCampsite.value = '';
   await store.getCampsites();
 }
 
 async function submitForm() {
-  await store.getCampsitesRecherche();
+  await store.getCampsitesFiltre();
 }
 
 onMounted(() => {
