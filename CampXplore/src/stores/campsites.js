@@ -70,8 +70,14 @@ export const useCampsitesStore = defineStore('campsites', () => {
     if(isValid){
       const debut = new Date(dateDebut.value);
       const fin = new Date(dateFin.value);
-
-      isValid = debut > aujourdHui && fin > debut;
+      if (debut < aujourdHui){
+        isValid = false; 
+        dateDebutErrorMessage.value = "La date d'arrivée doit être plus tard que la date d'aujourd'hui"
+      }
+      if (fin < debut){
+        isValid = false; 
+        dateFinErrorMessage.value = "La date de départ doit être plus tard que la date d'arrivée"
+      }
     }
     return isValid;
   }
