@@ -31,8 +31,16 @@
           </div>
           <div class="col-md-3 p-3">
             <div>
-              <label for="type" class="form-label">Type de site de camp:</label>
-              <input type="text" id="type" name="type" class="form-control" v-model.trim="typeCampsite">
+            <label for="type" class="form-label">Type de site de camp:</label>
+            <select id="type" name="type" class="form-control" v-model="typeCampsite">
+                <option value="">-- Sélectionner un type --</option>
+                <option value="tente">Tente</option>
+                <option value="vr">VR</option>
+                <option value="chalet">Chalet</option>
+                <option value="glamping">Glamping</option>
+                <option value="arrière-pays">Arrière-pays</option>
+                <option value="autre">Autre</option>
+            </select>
             </div>
           </div>
       </div>
