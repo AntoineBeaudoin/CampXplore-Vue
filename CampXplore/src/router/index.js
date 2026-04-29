@@ -6,8 +6,8 @@ const router = createRouter({
     {
       path: '/',
       name: "Home",
-      redirect: "/campsites",
-      meta: {title: "Accueil"},
+      component: () => import('@/Vues/HomeView.vue'),
+      meta: {title: "Accueil | CampXplore"},
     },
     {
       path: "/campsites",
