@@ -8,21 +8,21 @@
             <div>
               <label for="dateDebut" class="form-label">Date d'arrivée:</label>
               <input type="date" id="dateDebut" name="dateDebut" class="form-control" v-model.trim="dateDebut">
-              <div v-if="dateDebutIsNotValid" class="text-danger">Le nom est requis</div>
+              <div v-if="dateDebutErrorMessage" class="text-danger">{{ dateDebutErrorMessage }}</div>
             </div>
           </div>
           <div class="col-md-3 p-3">
             <div>
               <label for="dateFin" class="form-label">Date de départ:</label>
               <input type="date" id="dateFin" name="dateFin" class="form-control" v-model.trim="dateFin">
-              <div v-if="dateFinIsNotValid" class="text-danger">Le nom est requis</div>
+              <div v-if="dateFinErrorMessage" class="text-danger">{{ dateFinErrorMessage }}</div>
             </div>
           </div>
           <div class="col-md-3 p-3">
             <div>
               <label for="nb_places_min" class="form-label">Nombre de personnes:</label>
               <input type="number" id="nb_places_min" name="nb_places_min" class="form-control" v-model.trim="nbPlacesMin">
-              <div v-if="nbPlacesMinIsNotValid" class="text-danger">Le nombre de places doit être suppérieur à 0</div>
+              <div v-if="nbPlacesMinErrorMessage" class="text-danger">{{ nbPlacesMinErrorMessage }}</div>
             </div>
           </div>
           <div class="col-md-3 p-3">
@@ -33,7 +33,7 @@
           </div>
       </div>
       <div class="d-flex justify-content-between align-items-center">
-        <button type="submit" class="btn btn-primary">Rechercher</button>
+        <button type="submit" class="btn btn-primary" @click="sendForm">Rechercher</button>
         <button type="button" id="btn-reset" class="btn btn-danger" @click="resetForm">Réinitialiser</button>
       </div>
     </form>
@@ -60,24 +60,51 @@ const dateFin = ref('');
 const nbPlacesMin = ref('');
 const typeCampsite = ref('');
 
-const dateDebutIsNotValid = ref(false);
-const dateFinIsNotValid = ref(false);
-const nbPlacesMinIsNotValid = ref(false);
-
 const dateDebutErrorMessage = ref('');
 const dateFinErrorMessage = ref('');
+const nbPlacesMinErrorMessage = ref('');
 
-function validateForm() {
+function validerDate(){
   let isValid = true;
   dateDebutErrorMessage.value = "";
   dateFinErrorMessage.value = "";
-
-  console.log(dateDebut.value);
-  console.log(dateFin.value);
-  console.log(nbPlacesMin.value);
-  console.log(typeCampsite.value);
-
+  const aujourdHui = new Date();
+  aujourdHui.setHours(0,0,0,0);
+  if (!dateDebut.value){
+    isValid = false;
+    dateDebutErrorMessage.value = "La date de début ne peut pas être vide";
+  }
+  if (!dateFin.value){
+    isValid = false;
+    dateFinErrorMessage.value = "La date de fin ne peut pas être vide";
+  }
+  if(isValid){
+    isValid = dateDebut.value < aujourdHui && dateFin.value < dateDebut.value;
+  }
   return isValid;
+}
+
+function validerNbPlaces(){
+  nbPlacesMinErrorMessage.value = '';
+  if (nbPlacesMin.value && nbPlacesMin.value <= 0){
+    nbPlacesMinErrorMessage.value = "Le nombre de places doit être suppérieur à 0";
+    return false;
+  }
+  return true;
+}
+
+function validateForm() {
+  const isValid = validerNbPlaces() && validerDate();
+  return isValid;
+}
+
+function sendForm(){
+  if (validateForm()){
+    console.log("Ok");
+  }
+  console.log(dateDebutErrorMessage.value)
+  console.log(dateFinErrorMessage.value)
+  console.log(nbPlacesMinErrorMessage.value)
 }
 
 const resetForm = () => {
