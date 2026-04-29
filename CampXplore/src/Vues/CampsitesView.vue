@@ -2,7 +2,7 @@
   <h1 class="text-center">Liste des campsites</h1>
   <div class=" border rounded text-align-center p-3">
     <h2>Trouver un camping</h2>
-    <form id="formulaire-filtre" class="mb-4" @submit.prevent="submitForm">
+    <form id="formulaire-filtre" class="mb-4" @submit.prevent="">
       <div class="row">
           <div class="col-md-3 p-3">
             <div>
@@ -33,7 +33,7 @@
           </div>
       </div>
       <div class="d-flex justify-content-between align-items-center">
-        <button type="submit" class="btn btn-primary" @click="sendForm">Rechercher</button>
+        <button type="submit" class="btn btn-primary" @click="submitForm">Rechercher</button>
         <button type="button" id="btn-reset" class="btn btn-danger" @click="resetForm">Réinitialiser</button>
       </div>
     </form>
@@ -47,78 +47,34 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onMounted } from 'vue';
 import CampsiteCard from '@/components/CampsiteCard.vue';
 import { useCampsitesStore } from '@/stores/campsites.js';
 import { storeToRefs } from 'pinia';
 
 const store = useCampsitesStore();
-const { isLoading, campsites, errorMessage } = storeToRefs(store);
+const { 
+  isLoading, 
+  campsites, 
+  errorMessage,dateDebut,
+  dateFin,
+  nbPlacesMin,
+  typeCampsite,
+  dateDebutErrorMessage,
+  dateFinErrorMessage,
+  nbPlacesMinErrorMessage 
+} = storeToRefs(store);
 
-const dateDebut = ref('');
-const dateFin = ref('');
-const nbPlacesMin = ref('');
-const typeCampsite = ref('');
-
-const dateDebutErrorMessage = ref('');
-const dateFinErrorMessage = ref('');
-const nbPlacesMinErrorMessage = ref('');
-
-function validerDate(){
-  let isValid = true;
-  dateDebutErrorMessage.value = "";
-  dateFinErrorMessage.value = "";
-  const aujourdHui = new Date();
-  aujourdHui.setHours(0,0,0,0);
-  if (!dateDebut.value){
-    isValid = false;
-    dateDebutErrorMessage.value = "La date de début ne peut pas être vide";
-  }
-  if (!dateFin.value){
-    isValid = false;
-    dateFinErrorMessage.value = "La date de fin ne peut pas être vide";
-  }
-  if(isValid){
-    isValid = dateDebut.value < aujourdHui && dateFin.value < dateDebut.value;
-  }
-  return isValid;
-}
-
-function validerNbPlaces(){
-  nbPlacesMinErrorMessage.value = '';
-  if (nbPlacesMin.value && nbPlacesMin.value <= 0){
-    nbPlacesMinErrorMessage.value = "Le nombre de places doit être suppérieur à 0";
-    return false;
-  }
-  return true;
-}
-
-function validateForm() {
-  const isValid = validerNbPlaces() && validerDate();
-  return isValid;
-}
-
-function sendForm(){
-  if (validateForm()){
-    console.log("Ok");
-  }
-  console.log(dateDebutErrorMessage.value)
-  console.log(dateFinErrorMessage.value)
-  console.log(nbPlacesMinErrorMessage.value)
-}
-
-const resetForm = () => {
+const resetForm = async () => {
   dateDebut.value = '';
   dateFin.value = '';
   nbPlacesMin.value = '';
   typeCampsite.value = '';
+  await store.getCampsites();
 }
 
-function submitForm() {
-  if (validateForm()) {
-    console.log("Formulaire envoyé");
-    resetForm();
-  }
+async function submitForm() {
+  await store.getCampsitesRecherche();
 }
 
 onMounted(() => {
