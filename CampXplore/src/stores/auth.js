@@ -6,7 +6,19 @@ export const useAuthStore = defineStore('auth', () => {
   const email = ref('');
   const pwd = ref('');
   const errorMessage = ref('');
-  
+
+  const prenom = ref('');
+  const nom = ref('');
+  const telephone = ref('');
+  const pwdC = ref('');
+
+  const prenomErrorMessage = ref('');
+  const nomErrorMessage = ref('');
+  const emailErrorMessage = ref('');
+  const telephoneErrorMessage = ref('');
+  const pwdErrorMessage = ref('');
+  const pwdCErrorMessage = ref('');
+
   async function login() {
     errorMessage.value = '';
     try {
@@ -22,10 +34,110 @@ export const useAuthStore = defineStore('auth', () => {
       console.log("Err ", err);
     }
   }
-  return{
+
+  function validerChampsNonVides() {
+    if (!prenom.value) {
+      prenomErrorMessage.value = "Le prénom ne peut pas être vide";
+      return false;
+    }
+    if (!nom.value) {
+      nomErrorMessage.value = "Le nom ne peut pas être vide";
+      return false;
+    }
+    if (!email.value) {
+      emailErrorMessage.value = "Le courriel ne peut pas être vide";
+      return false;
+    }
+    if (!telephone.value) {
+      prenomErrorMessage.value = "Le téléphone ne peut pas être vide";
+      return false;
+    }
+    if (!pwd.value) {
+      pwdErrorMessage.value = "Le mot de passe ne peut pas être vide";
+      return false;
+    }
+    return true;
+  }
+
+  const mdpValide = (v) => {
+    const contientMajuscule = (str) => /[A-Z]/.test(str);
+    const contientNombre = (str) => /[\d]/.test(str);
+    const contientCharSpeciaux = (str) => /[@$!%*?&]/.test(str);
+    const mdpAssezLong = v.length > 10;
+    return contientMajuscule(v) && contientNombre(v) && contientCharSpeciaux(v) && mdpAssezLong;
+  };
+
+  function validerRegister() {
+    errorMessage.value = '';
+    prenomErrorMessage.value = '';
+    nomErrorMessage.value = '';
+    emailErrorMessage.value = '';
+    telephoneErrorMessage.value = '';
+    pwdErrorMessage.value = '';
+    pwdCErrorMessage.value = '';
+    let isValid = validerChampsNonVides();
+
+    if (pwd.value !== pwdC.value) {
+      isValid = false;
+      pwdCErrorMessage.value = "Le mot de passe n'est pas pareille";
+    }
+    if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email.value)) {
+      isValid = false;
+      emailErrorMessage.value = "Le courriel n'a pas le bon format";
+    }
+    if (!/\d{10}/.test(telephone.value)) {
+      isValid = false;
+      telephoneErrorMessage.value = "Le numéro de téléphone doit contenir 10 chiffres";
+    }
+    if (!mdpValide(pwd.value)) {
+      isValid = false;
+      pwdErrorMessage.value = "Le mot de passe doit être au moins 10 charactère " +
+        "de long en ayant au moins une majuscule, un chiffre et un charactère spécial";
+    }
+    if (!isValid) {
+      errorMessage.value = "Il y a au moins une erreur dans le formulaire";
+    }
+    return isValid;
+  }
+
+  async function register() {
+    if (validerRegister()) {
+      try {
+        const fetched = await apiFetch('/api/auth/register', {
+          method: 'POST',
+          headers: {},
+          body: JSON.stringify(
+            {
+              firstName: prenom.value,
+              lastName: nom.value,
+              email: email.value,
+              password: pwd.value,
+              phone: telephone.value,
+              role: "user"
+            })
+        });
+      } catch (err) {
+        errorMessage.value = "Une erreur est survenue";
+        console.log("Err ", err);
+      }
+    }
+  }
+
+  return {
     login,
     email,
     pwd,
-    errorMessage
+    errorMessage,
+    prenom,
+    nom,
+    telephone,
+    pwdC,
+    register,
+    prenomErrorMessage,
+    nomErrorMessage,
+    emailErrorMessage,
+    telephoneErrorMessage,
+    pwdErrorMessage,
+    pwdCErrorMessage,
   }
 })

@@ -14,6 +14,9 @@
                         <router-link to="/" class="nav-link ms-3">AutreLien</router-link>
                     </li>
                     <li class="nav-item me-3" v-if="!isLogged">
+                        <router-link :to="{name: 'register'}" class="nav-link">S'inscrire</router-link>
+                    </li>
+                    <li class="nav-item me-3" v-if="!isLogged">
                         <router-link :to="{name: 'login'}" class="nav-link">Connexion</router-link>
                     </li>
                     <li class="nav-item me-3" v-else>
