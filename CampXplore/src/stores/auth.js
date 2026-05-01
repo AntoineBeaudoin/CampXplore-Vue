@@ -3,6 +3,9 @@ import { defineStore } from 'pinia'
 import { apiFetch } from '@/utils/apiFetch.js';
 
 export const useAuthStore = defineStore('auth', () => {
+  const errorMessage = ref('');
+  const successMessage = ref('');
+
   const email = ref('');
   const pwd = ref('');
   const prenom = ref('');
@@ -11,7 +14,6 @@ export const useAuthStore = defineStore('auth', () => {
   const pwdC = ref('');
   const role = ref('');
   
-  const errorMessage = ref('');
   const prenomErrorMessage = ref('');
   const nomErrorMessage = ref('');
   const emailErrorMessage = ref('');
@@ -36,27 +38,24 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   function validerChampsNonVides() {
+    let isValid = true;
     if (!prenom.value) {
       prenomErrorMessage.value = "Le prénom ne peut pas être vide";
-      return false;
+      isValid = false;
     }
     if (!nom.value) {
       nomErrorMessage.value = "Le nom ne peut pas être vide";
-      return false;
+      isValid = false;
     }
     if (!email.value) {
       emailErrorMessage.value = "Le courriel ne peut pas être vide";
-      return false;
+      isValid = false;
     }
     if (!telephone.value) {
       prenomErrorMessage.value = "Le téléphone ne peut pas être vide";
-      return false;
+      isValid = false;
     }
-    if (!pwd.value) {
-      pwdErrorMessage.value = "Le mot de passe ne peut pas être vide";
-      return false;
-    }
-    return true;
+    return isValid;
   }
 
   const mdpValide = (v) => {
@@ -85,7 +84,7 @@ export const useAuthStore = defineStore('auth', () => {
       isValid = false;
       emailErrorMessage.value = "Le courriel n'a pas le bon format";
     }
-    if (!/\d{10}/.test(telephone.value)) {
+    if (!validerTelephoneContient10Chiffres()) {
       isValid = false;
       telephoneErrorMessage.value = "Le numéro de téléphone doit contenir 10 chiffres";
     }
@@ -140,6 +139,51 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  function validerTelephoneContient10Chiffres(){
+    return /\d{10}/.test(telephone.value);
+  }
+
+  function validerMajProfile(){
+    errorMessage.value = '';
+    prenomErrorMessage.value = '';
+    nomErrorMessage.value = '';
+    telephoneErrorMessage.value = '';
+    let isValid = validerChampsNonVides();
+
+    if (!validerTelephoneContient10Chiffres()) {
+      isValid = false;
+      telephoneErrorMessage.value = "Le numéro de téléphone doit contenir 10 chiffres";
+    }
+    if (!isValid) {
+      errorMessage.value = "Il y a au moins une erreur dans le formulaire";
+    }
+    return isValid;
+  }
+
+  async function majProfile() {
+    successMessage.value = "";
+    errorMessage.value = "";
+    if (validerMajProfile()){
+      try {
+        const fetched = await apiFetch('/api/auth/profile', {
+          method: 'PUT',
+          headers: {},
+          body: JSON.stringify(
+            {
+              firstName: prenom.value,
+              lastName: nom.value,
+              phone: telephone.value, 
+              role: role.value
+            })
+        });
+        successMessage.value = "La mise à jours du profile a été effectué avec succèes!";
+      } catch (err) {
+        errorMessage.value = "Une erreur est survenue lors de la mise à jours du profile utilisateur";
+        console.log("Err ", err);
+      }
+    }
+  }
+
   return {
     login,
     email,
@@ -157,6 +201,8 @@ export const useAuthStore = defineStore('auth', () => {
     pwdErrorMessage,
     pwdCErrorMessage,
     getProfile,
-    role
+    role,
+    majProfile,
+    successMessage
   }
 })
