@@ -50,11 +50,11 @@
       </div>
     </form>
   </div>
-  <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
+  <div class="row g-4 py-5">
       <p v-if="isLoading" class="col-12">Chargement en cours...</p>
       <p v-else-if="errorMessage" class="col-12 text-danger">{{ errorMessage }}</p>
-      <p v-else-if="campsites.length === 0" class="col-12">Aucun campsite</p>
-      <CampsiteCard v-for="campsite in campsites" :key="campsite._id" :campsite="campsite"></CampsiteCard>
+      <p v-else-if="campsites.length === 0" class="col-12">Aucun campsite trouvé - veuillez faire une nouvelle recherche</p>
+      <CampsiteCard class="col-12 col-lg-4" v-for="campsite in campsites" :key="campsite._id" :campsite="campsite"></CampsiteCard>
   </div>
 </template>
 
@@ -90,6 +90,6 @@ async function submitForm() {
 }
 
 onMounted(() => {
-  store.getCampsites();
+  campsites.value = [];
 })
 </script>

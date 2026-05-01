@@ -25,11 +25,11 @@
       </div>
     </form>
   </div>
-  <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
+  <div class="row g-4 py-5">
       <p v-if="isLoading" class="col-12">Chargement en cours...</p>
       <p v-else-if="errorMessage" class="col-12 text-danger">{{ errorMessage }}</p>
       <p v-else-if="campsites.length === 0" class="col-12">Aucun campsite</p>
-      <CampsiteCard v-for="campsite in campsites" :key="campsite._id" :campsite="campsite"></CampsiteCard>
+      <CampsiteCard class="col-12 col-lg-4" v-for="campsite in campsites" :key="campsite._id" :campsite="campsite"></CampsiteCard>
   </div>
 </template>
 
