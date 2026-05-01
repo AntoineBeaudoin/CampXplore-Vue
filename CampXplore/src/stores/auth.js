@@ -5,13 +5,13 @@ import { apiFetch } from '@/utils/apiFetch.js';
 export const useAuthStore = defineStore('auth', () => {
   const email = ref('');
   const pwd = ref('');
-  const errorMessage = ref('');
-
   const prenom = ref('');
   const nom = ref('');
   const telephone = ref('');
   const pwdC = ref('');
-
+  const role = ref('');
+  
+  const errorMessage = ref('');
   const prenomErrorMessage = ref('');
   const nomErrorMessage = ref('');
   const emailErrorMessage = ref('');
@@ -28,7 +28,7 @@ export const useAuthStore = defineStore('auth', () => {
         body: JSON.stringify({ email: email.value, password: pwd.value })
       });
       const data = fetched.data;
-      localStorage.setItem('token', data.token);
+      localStorage.setItem('jwt', data.token);
     } catch (err) {
       errorMessage.value = "Nom d'utilisateur ou mot de passe non valide";
       console.log("Err ", err);
@@ -123,6 +123,23 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  async function getProfile() {
+    try {
+      const fetched = await apiFetch('/api/auth/profile', {
+        method: 'GET',
+        headers: {},
+      });
+      prenom.value = fetched.data.firstName;
+      nom.value = fetched.data.lastName;
+      email.value = fetched.data.email;
+      telephone.value = fetched.data.phone; 
+      role.value = fetched.data.role;
+    } catch (err) {
+      errorMessage.value = "Une erreur est survenue lors de l'obtention du profile utilisateur";
+      console.log("Err ", err);
+    }
+  }
+
   return {
     login,
     email,
@@ -139,5 +156,7 @@ export const useAuthStore = defineStore('auth', () => {
     telephoneErrorMessage,
     pwdErrorMessage,
     pwdCErrorMessage,
+    getProfile,
+    role
   }
 })

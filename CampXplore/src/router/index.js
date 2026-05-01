@@ -41,6 +41,12 @@ const router = createRouter({
       meta: {title: "S'inscrire"},
     },
     {
+      path: "/profile",
+      name: "profile",
+      component: () => import('@/Vues/ProfileView.vue'),
+      meta: {title: "Profile | CampXplore", requireAuth: true},
+    },
+    {
       path: '/:pathMatch(.*)*',
       name: 'NotFound',
       component: () => import('@/Vues/NotFoundView.vue'),
@@ -62,7 +68,7 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  const isLogged = localStorage.getItem('token');
+  const isLogged = localStorage.getItem('jwt');
   if (to.meta.requireAuth && !isLogged){
     next({name: "login", query: {redirect: to.fullPath}});
   }

@@ -19,7 +19,10 @@
                     <li class="nav-item me-3" v-if="!isLogged">
                         <router-link :to="{name: 'login'}" class="nav-link">Connexion</router-link>
                     </li>
-                    <li class="nav-item me-3" v-else>
+                    <li class="nav-item me-3" v-if="isLogged">
+                        <router-link :to="{name: 'profile'}" class="nav-link">Profile</router-link>
+                    </li>
+                    <li class="nav-item me-3" v-if="isLogged">
                         <a href="#" @click="logout" class="nav-link">Déconnexion</a>
                     </li>
                 </ul>
@@ -42,11 +45,11 @@
     });
 
     function getToken(){
-        return localStorage.getItem('token');
+        return localStorage.getItem('jwt');
     };
 
     function logout() {
-        localStorage.removeItem('token');
+        localStorage.removeItem('jwt');
         tokenRef.value = null;
     };
 
@@ -59,7 +62,7 @@
     });
 
     function handleStorage(e){
-        if (e.key === 'token'){
+        if (e.key === 'jwt'){
             tokenRef.value = getToken();
         }
     };
