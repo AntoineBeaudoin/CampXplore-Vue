@@ -1,6 +1,6 @@
 <template>
     <h1>S'inscrire</h1>
-    <form id="formulaire-filtre" class="mb-4" @submit.prevent="">
+    <form id="formulaire-Register" class="mb-4" @submit.prevent="">
         <div class="row">
             <div class="col-md-3 p-3">
                 <div>
