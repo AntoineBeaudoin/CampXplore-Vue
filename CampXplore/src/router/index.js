@@ -47,6 +47,12 @@ const router = createRouter({
       meta: {title: "Profile | CampXplore", requireAuth: true},
     },
     {
+      path: "/reservations",
+      name: "reservations",
+      component: () => import('@/Vues/ReservationsView.vue'),
+      meta: {title: "Réservations | CampXplore", requireAuth: true},
+    },
+    {
       path: '/:pathMatch(.*)*',
       name: 'NotFound',
       component: () => import('@/Vues/NotFoundView.vue'),

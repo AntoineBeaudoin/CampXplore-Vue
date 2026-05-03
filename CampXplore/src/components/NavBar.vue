@@ -23,6 +23,9 @@
                         <router-link :to="{name: 'profile'}" class="nav-link">Profile</router-link>
                     </li>
                     <li class="nav-item me-3" v-if="isLogged">
+                        <router-link :to="{name: 'reservations'}" class="nav-link">Mes Réservations</router-link>
+                    </li>
+                    <li class="nav-item me-3" v-if="isLogged">
                         <a href="#" @click="logout" class="nav-link">Déconnexion</a>
                     </li>
                 </ul>
