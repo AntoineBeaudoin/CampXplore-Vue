@@ -3,6 +3,9 @@ import { defineStore } from 'pinia'
 import { apiFetch } from '@/utils/apiFetch.js';
 
 export const useAuthStore = defineStore('auth', () => {
+  const MESSAGE_ERREUR_MDP = "Le mot de passe doit être au moins 10 charactère " +
+    "de long en ayant au moins une majuscule, un chiffre et un charactère spécial";
+
   const errorMessage = ref('');
   const successMessage = ref('');
 
@@ -13,13 +16,19 @@ export const useAuthStore = defineStore('auth', () => {
   const telephone = ref('');
   const pwdC = ref('');
   const role = ref('');
-  
+  const currentPassword = ref('');
+  const newPassword = ref('');
+  const confirmPassword = ref('');
+
   const prenomErrorMessage = ref('');
   const nomErrorMessage = ref('');
   const emailErrorMessage = ref('');
   const telephoneErrorMessage = ref('');
   const pwdErrorMessage = ref('');
   const pwdCErrorMessage = ref('');
+  const currentPasswordErrorMessage = ref('');
+  const newPasswordErrorMessage = ref('');
+  const confirmPasswordErrorMessage = ref('');
 
   async function login() {
     errorMessage.value = '';
@@ -90,8 +99,7 @@ export const useAuthStore = defineStore('auth', () => {
     }
     if (!mdpValide(pwd.value)) {
       isValid = false;
-      pwdErrorMessage.value = "Le mot de passe doit être au moins 10 charactère " +
-        "de long en ayant au moins une majuscule, un chiffre et un charactère spécial";
+      pwdErrorMessage.value = MESSAGE_ERREUR_MDP;
     }
     if (!isValid) {
       errorMessage.value = "Il y a au moins une erreur dans le formulaire";
@@ -131,7 +139,7 @@ export const useAuthStore = defineStore('auth', () => {
       prenom.value = fetched.data.firstName;
       nom.value = fetched.data.lastName;
       email.value = fetched.data.email;
-      telephone.value = fetched.data.phone; 
+      telephone.value = fetched.data.phone;
       role.value = fetched.data.role;
     } catch (err) {
       errorMessage.value = "Une erreur est survenue lors de l'obtention du profile utilisateur";
@@ -139,11 +147,11 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  function validerTelephoneContient10Chiffres(){
+  function validerTelephoneContient10Chiffres() {
     return /\d{10}/.test(telephone.value);
   }
 
-  function validerMajProfile(){
+  function validerMajProfile() {
     errorMessage.value = '';
     prenomErrorMessage.value = '';
     nomErrorMessage.value = '';
@@ -163,22 +171,67 @@ export const useAuthStore = defineStore('auth', () => {
   async function majProfile() {
     successMessage.value = "";
     errorMessage.value = "";
-    if (validerMajProfile()){
+    if (validerMajProfile()) {
       try {
-        const fetched = await apiFetch('/api/auth/profile', {
+        await apiFetch('/api/auth/profile', {
           method: 'PUT',
           headers: {},
           body: JSON.stringify(
             {
               firstName: prenom.value,
               lastName: nom.value,
-              phone: telephone.value, 
+              phone: telephone.value,
               role: role.value
             })
         });
         successMessage.value = "La mise à jours du profile a été effectué avec succèes!";
       } catch (err) {
         errorMessage.value = "Une erreur est survenue lors de la mise à jours du profile utilisateur";
+        console.log("Err ", err);
+      }
+    }
+  }
+
+  function validerModifierMdp() {
+    let isValid = true;
+    if (!currentPassword.value) {
+      isValid = false;
+      currentPasswordErrorMessage.value = "Votre mot de passe courrant est requis";
+    }
+    if (!mdpValide(newPassword.value)){
+      isValid = false;
+      newPasswordErrorMessage.value = MESSAGE_ERREUR_MDP;
+    }
+    if (newPassword.value !== confirmPassword.value){
+      isValid = false;
+      confirmPasswordErrorMessage.value = "Vous devez confirmer votre nouveau mot de passe";
+    }
+    if (!isValid){
+      errorMessage.value = "Veuillez corriger les erreurs du formulaire de changement de mot de passe";
+    }
+    return isValid;
+  }
+
+  async function modifierMdp() {
+    successMessage.value = "";
+    errorMessage.value = "";
+    currentPasswordErrorMessage.value = "";
+    newPasswordErrorMessage.value = "";
+    confirmPasswordErrorMessage.value = "";
+    if (validerModifierMdp()) {
+      try {
+        await apiFetch('/api/auth/password', {
+          method: 'PATCH',
+          headers: {},
+          body: JSON.stringify(
+            {
+              currentPassword: currentPassword.value,
+              newPassword: newPassword.value
+            })
+        });
+        successMessage.value = "La mise à jours du mot de passe a été effectué avec succèes!";
+      } catch (err) {
+        errorMessage.value = "Une erreur est survenue lors de la mise à jours du mot de passe";
         console.log("Err ", err);
       }
     }
@@ -203,6 +256,13 @@ export const useAuthStore = defineStore('auth', () => {
     getProfile,
     role,
     majProfile,
-    successMessage
+    successMessage,
+    currentPassword,
+    newPassword,
+    confirmPassword,
+    currentPasswordErrorMessage,
+    newPasswordErrorMessage,
+    confirmPasswordErrorMessage,
+    modifierMdp
   }
 })
