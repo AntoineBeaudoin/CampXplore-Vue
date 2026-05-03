@@ -35,6 +35,21 @@
 <script setup>
     import { computed, onBeforeUnmount, onMounted, ref, watch} from 'vue';
     import { useRoute } from 'vue-router';
+    import { useAuthStore } from '@/stores/auth.js';
+    import { storeToRefs } from 'pinia';
+
+    const store = useAuthStore();
+    const {
+        email,
+        prenom,
+        nom,
+        telephone, 
+        role,
+        pwd,
+        currentPassword,
+        successMessage
+    } = storeToRefs(store);
+
     const tokenRef = ref(getToken());
 
     const isLogged = computed(() => tokenRef.value)
@@ -51,6 +66,14 @@
     function logout() {
         localStorage.removeItem('jwt');
         tokenRef.value = null;
+        email.value = "";
+        prenom.value = "";
+        nom.value = "";
+        telephone.value = ""; 
+        role.value = "";
+        currentPassword.value = "";
+        pwd.value = "";
+        successMessage.value = "Déconnexion effectué avec succès";
     };
 
     onMounted(() => {
