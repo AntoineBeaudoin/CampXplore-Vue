@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-        <div class="border rounded p-3 w-50">
+        <div class="border rounded p-3 w-50 m-auto border-3 border-black">
             <div class="text-center">Connexion</div>
             <form @submit.prevent="login" class="mx-auto w-75">
                 <div class="mb-3">
