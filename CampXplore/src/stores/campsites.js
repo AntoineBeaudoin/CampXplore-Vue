@@ -21,7 +21,7 @@ export const useCampsitesStore = defineStore('campsites', () => {
   async function getCampsites (){
     try {
       isLoading.value = true;
-      errorMessage.value = "Une erreur s'est produite lors du chargement du site";
+      errorMessage.value = "";
 
       const fetched = await apiFetch('/api/campsites', {
         method: 'GET',
