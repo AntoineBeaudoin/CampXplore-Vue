@@ -16,6 +16,15 @@
                 </tr>
             </thead>
             <tbody>
+                <tr v-if="reservations.length === 0">
+                    <td>Aucune réservations...</td>
+                    <td>--</td>
+                    <td>--</td>
+                    <td>--</td>
+                    <td>--</td>
+                    <td>--</td>
+                    <td class="text-end">--</td>
+                </tr>
                 <tr v-for="(item, index) in reservations" :key="index">
                     <td>{{ item.campsite.name }}</td>
                     <td>{{ new Date(item.startDate).toLocaleDateString('fr-ca') }}</td>
