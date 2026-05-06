@@ -12,7 +12,9 @@ export async function apiFetch(path, options = {}) {
   const res = await fetch(`${API_BASE}${path}`, { ...options, headers });
   if (!res.ok) {
     const text = await res.text();
-    throw new Error(`HTTP ${res.status} ${text || ""}`.trim());
+    const error = new Error(`HTTP ${res.status} ${text || ""}`.trim());
+    error.status = res.status;
+    throw error;
   }
   if (res.status === 204) return null;
   return res.json();
