@@ -1,6 +1,7 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { apiFetch } from '@/utils/apiFetch.js';
+import { jwtDecode } from "jwt-decode";
 
 export const useAuthStore = defineStore('auth', () => {
   const MESSAGE_ERREUR_MDP = "Le mot de passe doit être au moins 10 charactère " +
@@ -30,7 +31,7 @@ export const useAuthStore = defineStore('auth', () => {
   const newPasswordErrorMessage = ref('');
   const confirmPasswordErrorMessage = ref('');
 
-  
+
   /**
    * Permet à l'utilisateur de se connecter
    * @async Requête sur la route POST de /api/auth/login
@@ -113,7 +114,7 @@ export const useAuthStore = defineStore('auth', () => {
     return isValid;
   }
 
-  
+
   /**
    * Créer un compte utilisateur
    * @async Requête sur la route post de /api/auth/register 
@@ -142,7 +143,7 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  
+
   /**
    * Récolter les données du compte utilisateur connecté
    * @async Requête sur la route GET de /api/auth/profile
@@ -186,7 +187,7 @@ export const useAuthStore = defineStore('auth', () => {
     return isValid;
   }
 
-  
+
   /**
    * Met à jours le profil de l'utilisateur connecté
    * @async Requête sur la route PUT de /api/auth/profile
@@ -222,21 +223,21 @@ export const useAuthStore = defineStore('auth', () => {
       isValid = false;
       currentPasswordErrorMessage.value = "Votre mot de passe courrant est requis";
     }
-    if (!mdpValide(newPassword.value)){
+    if (!mdpValide(newPassword.value)) {
       isValid = false;
       newPasswordErrorMessage.value = MESSAGE_ERREUR_MDP;
     }
-    if (newPassword.value !== confirmPassword.value){
+    if (newPassword.value !== confirmPassword.value) {
       isValid = false;
       confirmPasswordErrorMessage.value = "Vous devez confirmer votre nouveau mot de passe";
     }
-    if (!isValid){
+    if (!isValid) {
       errorMessage.value = "Veuillez corriger les erreurs du formulaire de changement de mot de passe";
     }
     return isValid;
   }
 
-  
+
   /**
    * Modifie le mot de passe de l'utilisateur connecté
    * @async Requête sur la route PATCH de /api/auth/password
@@ -267,6 +268,24 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  
+  /**
+   * Valide si l'utilisateur connecté est un administrateur
+   * @returns {boolean} 
+   */
+  function isUserAdmin() {
+    const token = localStorage.getItem("jwt");
+    if (!token) {
+      return false;
+    }
+    try {
+      const decoded = jwtDecode(token);
+      return decoded.role === "admin";
+    } catch {
+      return false;
+    }
+  }
+
   return {
     login,
     email,
@@ -293,6 +312,7 @@ export const useAuthStore = defineStore('auth', () => {
     currentPasswordErrorMessage,
     newPasswordErrorMessage,
     confirmPasswordErrorMessage,
-    modifierMdp
+    modifierMdp,
+    isUserAdmin
   }
 })
