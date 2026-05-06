@@ -80,6 +80,31 @@ export const useReservationStore = defineStore('reservations', () => {
         }
     }
 
+    async function patchReservationStatutFromList(newStatus, reservationId) {
+        try {
+            isLoading.value = true;
+            errorMessage.value = "";
+
+            const updatedReservation = await apiFetch('/api/reservations/' + reservationId, {
+                method: 'PATCH',
+                headers: {},
+                body: JSON.stringify({
+                    status: newStatus,
+                })
+            });
+
+            const index = reservations.value.findIndex(r => r._id === reservationId);
+            if (index !== -1) {
+                reservations.value[index].status = newStatus;
+            }
+
+        } catch (err) {
+            errorMessage.value = "Une erreure s'est produite lors de la modification du statut de la réservation";
+        } finally {
+            isLoading.value = false;
+        }
+    }
+
     return {
         getReservations,
         isLoading,
@@ -87,6 +112,7 @@ export const useReservationStore = defineStore('reservations', () => {
         reservations,
         getReservationById,
         reservation,
-        patchReservationStatut
+        patchReservationStatut,
+        patchReservationStatutFromList
     }
 })

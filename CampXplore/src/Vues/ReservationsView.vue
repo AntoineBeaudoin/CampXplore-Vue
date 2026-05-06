@@ -38,7 +38,7 @@
                     </td>
                     <td class="text-end">
                         <RouterLink class="btn btn-sm btn-outline-secondary me-1" :to="{name: 'ReservationDetails', params: {id: item._id}}">Détails</RouterLink>
-                        <button v-if="peutAnnuler(item.status)" class="btn btn-sm btn-outline-danger">Annuler</button>
+                        <button v-if="peutAnnuler(item.status)" @click="modifierStatutReservation('cancelled', item._id)" class="btn btn-sm btn-outline-danger">Annuler</button>
                     </td>
                 </tr>
             </tbody>
@@ -72,6 +72,10 @@ function classeStatus(status) {
 
 const peutAnnuler = (status) => {
     return status === 'pending';
+}
+
+async function modifierStatutReservation(nouveauStatut, id){
+    await store.patchReservationStatutFromList(nouveauStatut, id);
 }
 
 onMounted(() => {
