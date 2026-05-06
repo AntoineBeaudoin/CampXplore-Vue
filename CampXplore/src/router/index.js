@@ -53,6 +53,13 @@ const router = createRouter({
       meta: {title: "Réservations | CampXplore", requireAuth: true},
     },
     {
+      path: "/reservations/:id",
+      name: "ReservationDetails",
+      component: () => import('@/Vues/ReservationDetailView.vue'),
+      props: true,
+      meta: {title: "Détails de la réservation | CampXplore", requireAuth: true},
+    },
+    {
       path: '/:pathMatch(.*)*',
       name: 'NotFound',
       component: () => import('@/Vues/NotFoundView.vue'),

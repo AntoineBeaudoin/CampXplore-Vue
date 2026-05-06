@@ -37,7 +37,7 @@
                         </span>
                     </td>
                     <td class="text-end">
-                        <button class="btn btn-sm btn-outline-secondary me-1">Détails</button>
+                        <RouterLink class="btn btn-sm btn-outline-secondary me-1" :to="{name: 'ReservationDetails', params: {id: item._id}}">Détails</RouterLink>
                         <button v-if="peutAnnuler(item.status)" class="btn btn-sm btn-outline-danger">Annuler</button>
                     </td>
                 </tr>
