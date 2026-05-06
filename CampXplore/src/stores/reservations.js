@@ -2,6 +2,8 @@ import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { apiFetch } from '@/utils/apiFetch.js';
 import { useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
+
 
 export const useReservationStore = defineStore('reservations', () => {
     const isLoading = ref('');
@@ -9,7 +11,8 @@ export const useReservationStore = defineStore('reservations', () => {
     const reservations = ref([]);
     const reservation = ref({});
     const router = useRouter();
-    
+    const route = useRoute();
+
     async function getReservations() {
         reservations.value = [];
         try {
@@ -51,12 +54,39 @@ export const useReservationStore = defineStore('reservations', () => {
         }
     }
 
+    async function patchReservationStatut(newStatus) {
+        try {
+            isLoading.value = true;
+            errorMessage.value = "";
+            const reservationId = route.params.id;
+
+            await apiFetch('/api/reservations/' + reservationId, {
+                method: 'PATCH',
+                headers: {},
+                body: JSON.stringify(
+                    {
+                        status: newStatus,
+                    })
+            });
+            reservation.value = getReservationById(reservationId);
+        } catch (err) {
+            errorMessage.value = "Une erreure s'est produite lors de la modification du statut de la réservation";
+            if (err.status === 404) {
+                router.replace({ name: "NotFound" });
+            }
+        }
+        finally {
+            isLoading.value = false;
+        }
+    }
+
     return {
         getReservations,
         isLoading,
         errorMessage,
         reservations,
         getReservationById,
-        reservation
+        reservation,
+        patchReservationStatut
     }
 })
