@@ -30,6 +30,12 @@ export const useAuthStore = defineStore('auth', () => {
   const newPasswordErrorMessage = ref('');
   const confirmPasswordErrorMessage = ref('');
 
+  
+  /**
+   * Permet à l'utilisateur de se connecter
+   * @async Requête sur la route POST de /api/auth/login
+   * @returns {*} 
+   */
   async function login() {
     errorMessage.value = '';
     try {
@@ -107,10 +113,16 @@ export const useAuthStore = defineStore('auth', () => {
     return isValid;
   }
 
+  
+  /**
+   * Créer un compte utilisateur
+   * @async Requête sur la route post de /api/auth/register 
+   * @returns {*} 
+   */
   async function register() {
     if (validerRegister()) {
       try {
-        const fetched = await apiFetch('/api/auth/register', {
+        await apiFetch('/api/auth/register', {
           method: 'POST',
           headers: {},
           body: JSON.stringify(
@@ -130,6 +142,12 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  
+  /**
+   * Récolter les données du compte utilisateur connecté
+   * @async Requête sur la route GET de /api/auth/profile
+   * @returns {*} 
+   */
   async function getProfile() {
     try {
       const fetched = await apiFetch('/api/auth/profile', {
@@ -168,6 +186,12 @@ export const useAuthStore = defineStore('auth', () => {
     return isValid;
   }
 
+  
+  /**
+   * Met à jours le profil de l'utilisateur connecté
+   * @async Requête sur la route PUT de /api/auth/profile
+   * @returns {*} 
+   */
   async function majProfile() {
     successMessage.value = "";
     errorMessage.value = "";
@@ -212,6 +236,12 @@ export const useAuthStore = defineStore('auth', () => {
     return isValid;
   }
 
+  
+  /**
+   * Modifie le mot de passe de l'utilisateur connecté
+   * @async Requête sur la route PATCH de /api/auth/password
+   * @returns {*} 
+   */
   async function modifierMdp() {
     successMessage.value = "";
     errorMessage.value = "";
