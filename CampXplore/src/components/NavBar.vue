@@ -10,22 +10,19 @@
                     <li class="nav-item me-3">
                         <router-link to="/campsites" class="nav-link ms-3">Campsites</router-link>
                     </li>
-                    <li class="nav-item me-3">
-                        <router-link to="/" class="nav-link ms-3">AutreLien</router-link>
-                    </li>
-                    <li class="nav-item me-3" v-if="!isLogged">
+                    <li class="nav-item me-3" v-if="!isUserConnexionValid">
                         <router-link :to="{name: 'register'}" class="nav-link">S'inscrire</router-link>
                     </li>
-                    <li class="nav-item me-3" v-if="!isLogged">
+                    <li class="nav-item me-3" v-if="!isUserConnexionValid">
                         <router-link :to="{name: 'login'}" class="nav-link">Connexion</router-link>
                     </li>
-                    <li class="nav-item me-3" v-if="isLogged">
+                    <li class="nav-item me-3" v-if="isUserConnexionValid">
                         <router-link :to="{name: 'profile'}" class="nav-link">Profile</router-link>
                     </li>
-                    <li class="nav-item me-3" v-if="isLogged">
+                    <li class="nav-item me-3" v-if="isUserConnexionValid">
                         <router-link :to="{name: 'reservations'}" class="nav-link">Mes Réservations</router-link>
                     </li>
-                    <li class="nav-item me-3" v-if="isLogged">
+                    <li class="nav-item me-3" v-if="isUserConnexionValid">
                         <a href="#" @click="logout" class="nav-link">Déconnexion</a>
                     </li>
                 </ul>
@@ -40,6 +37,7 @@
     import { useRoute } from 'vue-router';
     import { useAuthStore } from '@/stores/auth.js';
     import { storeToRefs } from 'pinia';
+    import { jwtDecode } from "jwt-decode";
 
     const store = useAuthStore();
     const {
@@ -66,6 +64,9 @@
         return localStorage.getItem('jwt');
     };
 
+    /**
+     * Vide les champs en déconnectant l'utilisateur 
+     */
     function logout() {
         localStorage.removeItem('jwt');
         tokenRef.value = null;
@@ -87,11 +88,39 @@
         window.removeEventListener("storage", handleStorage)
     });
 
+    /**
+     * Met à jours le token jwt lors d'un changement dans le storage
+     * @param e événement dans le storage
+     */
     function handleStorage(e){
         if (e.key === 'jwt'){
             tokenRef.value = getToken();
         }
     };
+
+    /**
+     * Valide si le token de l'utilisateur n'est pas expiré 
+     */
+    function isTokenValid() {
+        const token = getToken();
+        if (!token) return false;
+        try {
+            const { exp } = jwtDecode(token);
+            return Date.now() < exp * 1000;
+        } catch {
+            return false;
+        }
+    }
+
+    /**
+     * Variable indiquant si l'utilisateur est connecté en validant si son token est toujours valide
+     */
+    const isUserConnexionValid = computed(() =>{
+        if (isLogged.value && isTokenValid()){
+            return true;
+        }
+        return false;
+    })
 </script>
 
 <style scoped>
