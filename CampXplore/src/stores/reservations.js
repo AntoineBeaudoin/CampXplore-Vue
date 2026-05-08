@@ -8,6 +8,7 @@ import { useRoute } from 'vue-router';
 export const useReservationStore = defineStore('reservations', () => {
     const isLoading = ref('');
     const errorMessage = ref('');
+    const typeStatut = ref('');
     const reservations = ref([]);
     const reservation = ref({});
     const router = useRouter();
@@ -105,6 +106,28 @@ export const useReservationStore = defineStore('reservations', () => {
         }
     }
 
+    async function getReservationsFiltre() {
+        let url = '/api/reservations';
+        if (typeStatut.value) {
+            url = url + `?status=${typeStatut.value}`;
+        }
+        try {
+            isLoading.value = true;
+            errorMessage.value = "";
+
+            const fetched = await apiFetch(url, {
+                method: 'GET',
+                headers: {}
+            });
+            reservations.value = fetched.data;
+        } catch (err) {
+            errorMessage.value = err;
+        }
+        finally {
+            isLoading.value = false;
+        }
+    }
+
     return {
         getReservations,
         isLoading,
@@ -113,6 +136,8 @@ export const useReservationStore = defineStore('reservations', () => {
         getReservationById,
         reservation,
         patchReservationStatut,
-        patchReservationStatutFromList
+        patchReservationStatutFromList,
+        typeStatut,
+        getReservationsFiltre
     }
 })
