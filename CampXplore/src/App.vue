@@ -1,6 +1,7 @@
 <template>
   <NavBar/>
   <section class="container">
+    <AlertMessage/>
     <router-view/>
   </section>
   <footer class="bg-black text-light mt-5 py-3">
@@ -10,6 +11,7 @@
 
 <script setup>
   import NavBar from './components/NavBar.vue';
+  import AlertMessage from './components/AlertMessage.vue';
 </script>
 
 <style scoped></style>
