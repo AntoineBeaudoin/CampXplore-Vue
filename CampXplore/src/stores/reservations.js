@@ -86,7 +86,7 @@ export const useReservationStore = defineStore('reservations', () => {
             isLoading.value = true;
             errorMessage.value = "";
 
-            const updatedReservation = await apiFetch('/api/reservations/' + reservationId, {
+            await apiFetch('/api/reservations/' + reservationId, {
                 method: 'PATCH',
                 headers: {},
                 body: JSON.stringify({

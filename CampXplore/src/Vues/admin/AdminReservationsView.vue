@@ -1,7 +1,27 @@
 <template>
     <AlertMessage :message="errorMessage" :es-succees="messageEsSuccees" />
     <AlertMessage :message="successMessage" :es-succees="messageEsSuccees" />
-    <h1>Mes réservations</h1>
+    <h1>Réservations des utilisateurs</h1>
+    <div class=" border rounded text-align-center p-3">
+        <form id="formulaire-filtre-statut" @submit.prevent="">
+            <div class="d-flex align-items-end">
+                <div>
+                    <label for="type" class="form-label">Statut:</label>
+                    <select id="type" name="type" class="form-control" v-model="typeStatut">
+                        <option value="">Tous</option>
+                        <option value="pending">En Attente</option>
+                        <option value="confirmed">Confirmée</option>
+                        <option value="cancelled">Annulée</option>
+                    </select>
+                </div>
+                <div class="ms-3">
+                    <button type="submit" class="btn btn-primary me-3" @click="submitFormFiltre">Rechercher</button>
+                    <button type="button" id="btn-reset" class="btn btn-danger"
+                        @click="resetFiltre">Réinitialiser</button>
+                </div>
+            </div>
+        </form>
+    </div>
     <div class="container mt-3 overflow-scroll">
         <p v-if="isLoading" class="d-block">Chargement en cours...</p>
         <table class="table table-hover align-middle">
@@ -40,9 +60,12 @@
                     <td class="text-end">
                         <RouterLink class="btn btn-sm btn-outline-secondary me-1"
                             :to="{ name: 'ReservationDetails', params: { id: item._id } }">Détails</RouterLink>
-                        <button v-if="peutAnnuler(item.status)"
+                        <button v-if="item.status !== 'cancelled'"
                             @click="modifierStatutReservation('cancelled', item._id)"
-                            class="btn btn-sm btn-outline-danger">Annuler</button>
+                            class="btn btn-sm btn-outline-danger me-1">Annuler</button>
+                        <button v-if="item.status === 'pending'"
+                            @click="modifierStatutReservation('confirmed', item._id)"
+                            class="btn btn-sm btn-outline-primary">Confirmer</button>
                     </td>
                 </tr>
             </tbody>
@@ -61,6 +84,7 @@ const {
     isLoading,
     errorMessage,
     reservations,
+    typeStatut
 } = storeToRefs(store);
 
 function classeStatus(status) {
@@ -74,12 +98,23 @@ function classeStatus(status) {
     }
 }
 
-const peutAnnuler = (status) => {
-    return status === 'pending';
-}
-
 async function modifierStatutReservation(nouveauStatut, id) {
     await store.patchReservationStatutFromList(nouveauStatut, id);
+}
+
+/**
+ * Vider la variable de filtre
+ */
+async function resetFiltre() {
+    typeStatut.value = '';
+    await store.getReservations();
+}
+
+/**
+ * Filtrer les données
+ */
+async function submitFormFiltre() {
+    await store.getReservationsFiltre();
 }
 
 onMounted(() => {
