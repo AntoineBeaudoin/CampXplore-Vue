@@ -54,7 +54,7 @@
                                         <button type="button" class="btn btn-secondary"
                                             data-bs-dismiss="modal">Annuler</button>
 
-                                        <button type="button" class="btn btn-danger"
+                                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal"
                                             @click="supprimerCampsite(item._id)">Supprimer</button>
                                     </div>
                                 </div>

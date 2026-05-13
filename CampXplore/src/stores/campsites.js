@@ -182,6 +182,31 @@ export const useCampsitesStore = defineStore('campsites', () => {
     }
   }
 
+  /**
+   * Supprimer un campsite
+   * @async Attend la réponse de l'API
+   * @param {*} id ID du campsite à supprimer
+   * @returns {*} Message indiquant le résultat de l'opération
+   */
+  async function supprimerUnCampsite(id) {
+    let url = '/api/campsites/' + id;
+    try {
+      await apiFetch(url, {
+        method: 'DELETE',
+        headers: {}
+      });
+      alertStore.success("L'emplacement de camping a été supprimé avec succèes.");
+    }
+    catch (err) {
+      if (/.409./.test(err)){
+        alertStore.error("L'emplacement ne peut pas être supprimé car il possède des réservations en cours ou non terminées.");
+      }
+      else{
+        alertStore.error("L'emplacement n'a pas pu être supprimé.");
+      }
+    }
+  }
+
   return {
     campsites,
     isLoading,
@@ -196,6 +221,7 @@ export const useCampsitesStore = defineStore('campsites', () => {
     dateFinErrorMessage,
     nbPlacesMinErrorMessage,
     getCampsitesRecherche,
-    getCampsitesFiltre
+    getCampsitesFiltre,
+    supprimerUnCampsite,
   }
 })
