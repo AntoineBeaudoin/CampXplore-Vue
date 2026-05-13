@@ -20,7 +20,7 @@ const router = createRouter({
       path: "/campsites/available",
       name: "CampsitesAvailable",
       component: () => import('@/Vues/CampsitesView.vue'),
-      meta: { title: "Campsites Disponibles" }
+      meta: { title: "Emplacements Disponibles" }
     },
     {
       path: "/campsites/:id",
@@ -52,6 +52,12 @@ const router = createRouter({
       name: "reservations",
       component: () => import('@/Vues/ReservationsView.vue'),
       meta: { title: "Réservations | CampXplore", requireAuth: true },
+    },
+    {
+      path: "/admin/campsites",
+      name: "AdminCampsites",
+      component: () => import('@/Vues/admin/AdminCampsitesView.vue'),
+      meta: { title: "Emplacements | CampXplore", requireAuth: true, requireAdmin: true },
     },
     {
       path: "/admin/reservations",
