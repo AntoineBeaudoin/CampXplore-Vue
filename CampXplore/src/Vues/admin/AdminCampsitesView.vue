@@ -33,18 +33,127 @@
                     <td>{{ item.pricePerNight }}$</td>
                     <td>{{ item.capacity }}</td>
                     <td class="text-end">
-                        <RouterLink class="btn btn-sm btn-outline-primary me-1"
-                            :to="{ name: 'ReservationDetails', params: { id: item._id } }">Modifier</RouterLink>
-                        <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal"
-                            data-bs-target="#deleteModal">Supprimer</button>
+                        <button type="button" class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="modal"
+                            :data-bs-target="'#modifyModal' + index"
+                            @click="campsiteTemp = { ...item }; viderChampsValidation()">Modifier</button>
+                        <div class="modal fade" :id="'modifyModal' + index" tabindex="-1"
+                            aria-labelledby="modifyModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header bg-success text-white">
+                                        <h2 class="modal-title" id="modifyModalLabel">Modifier un emplacement</h2>
+                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form @submit.prevent="modifierEmplacement">
+                                            <div class="row mb-3">
+                                                <div class="col-md-6 text-start">
+                                                    <label for="modifierName" class="form-label">Nom *</label>
+                                                    <input for="modifierName" id="modifierName" type="text"
+                                                        class="form-control" v-model="campsiteTemp.name" />
+                                                    <span v-show="validationErrors.includes('name')"
+                                                        class="text-danger">Le
+                                                        nom est requis</span>
+                                                    <span v-show="campingExisteDeja" class="text-danger">Le
+                                                        nom et le lieu appartient déjà à un autre emplacement</span>
+                                                </div>
+                                                <div class="col-md-6 text-start">
+                                                    <label for="modifierLieu" class="form-label">Lieu *</label>
+                                                    <input for="modifierLieu" id="modifierLieu" type="text"
+                                                        class="form-control" v-model="campsiteTemp.location" />
+                                                    <span v-show="validationErrors.includes('location')"
+                                                        class="text-danger">Le lieu est requis</span>
+                                                    <span v-show="campingExisteDeja" class="text-danger">Le
+                                                        nom et le lieu appartient déjà à un autre emplacement</span>
+                                                </div>
+                                            </div>
+                                            <div class="mb-3 text-start">
+                                                <label for="modifierDesc" class="form-label">Description</label>
+                                                <textarea for="modifierDesc" id="modifierDesc" class="form-control"
+                                                    rows="3" v-model="campsiteTemp.description"></textarea>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <div class="col-md-4 text-start">
+                                                    <label for="modifierType" class="form-label">Type *</label>
+                                                    <select for="modifierType" id="modifierType" class="form-select"
+                                                        v-model="campsiteTemp.type">
+                                                        <option value="tente">Tente</option>
+                                                        <option value="vr">Vr</option>
+                                                        <option value="arrière-pays">Arrière-pays</option>
+                                                        <option value="glamping">glamping</option>
+                                                        <option value="chalet">chalet</option>
+                                                    </select>
+                                                    <span v-show="validationErrors.includes('type')"
+                                                        class="text-danger">Le
+                                                        type est requis</span>
+                                                </div>
+                                                <div class="col-md-4 text-start">
+                                                    <label for="modifierPpn" class="form-label">Prix par nuit
+                                                        ($)*</label>
+                                                    <input for="modifierPpn" id="modifierPpn" type="number"
+                                                        class="form-control" v-model="campsiteTemp.pricePerNight" />
+                                                    <span v-show="validationErrors.includes('pricePerNight')"
+                                                        class="text-danger">Le prix par nuit doit être suppérieur ou
+                                                        égale à 0</span>
+                                                </div>
+                                                <div class="col-md-4 text-start">
+                                                    <label for="modifierCapacite" class="form-label">Capacité(personnes)
+                                                        *</label>
+                                                    <input for="modifierCapacite" id="modifierCapacite" type="number"
+                                                        class="form-control" v-model="campsiteTemp.capacity" />
+                                                    <span v-show="validationErrors.includes('capacity')"
+                                                        class="text-danger">La capacité doit être suppérieur ou égale à
+                                                        1</span>
+                                                </div>
+                                            </div>
+                                            <div v-if="campsiteTemp.type === 'vr'" class="text-start">
+                                                <label for="modifierCarLength" class="form-label">Longuer du véhicule
+                                                    *</label>
+                                                <input for="modifierCarLength" id="modifierCarLength" type="text"
+                                                    class="form-control" v-model="campsiteTemp.maxVehicleLength" />
+                                                <span v-show="validationErrors.includes('maxVehicleLength')"
+                                                    class="text-danger">La longueur du véhicule est requise</span>
+                                            </div>
+                                            <div class="mb-3 text-start">
+                                                <label :for="equipement" class="form-label fw-bold">Équipements</label>
+                                                <div class="row">
+                                                    <div class="col-md-4 mb-2" v-for="equipement in equipements"
+                                                        :key="equipement">
+                                                        <div class="form-check">
+                                                            <input :for="equipement" class="form-check-input"
+                                                                type="checkbox" :id="equipement" :value="equipement"
+                                                                v-model="campsiteTemp.amenities" />
+                                                            <label class="form-check-label" :for="equipement">{{
+                                                                equipement }}</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary"
+                                            data-bs-dismiss="modal">Annuler</button>
+                                        <button v-if="isFormValid && !campingExisteDeja" type="button" class="btn btn-danger"
+                                            data-bs-dismiss="modal"
+                                            @click="modifierEmplacement(item._id, index)">Enregistrer</button>
+                                        <button v-else type="button" class="btn btn-success"
+                                            @click="modifierEmplacement(item._id, index)">Enregistrer</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-                        <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel"
-                            aria-hidden="true">
+                        <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal"
+                            :data-bs-target="'#deleteModal' + index">Supprimer</button>
+                        <div class="modal fade" :id="'deleteModal' + index" tabindex="-1"
+                            aria-labelledby="deleteModalLabel" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
 
                                     <div class="modal-header">
-                                        <h5 class="modal-title" id="deleteModalLabel">Confirmer la supression</h5>
+                                        <h2 class="modal-title" id="deleteModalLabel">Confirmer la supression</h2>
 
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                             aria-label="Close"></button>
@@ -68,7 +177,7 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useCampsitesStore } from '@/stores/campsites.js';
 import { storeToRefs } from 'pinia';
 
@@ -76,11 +185,64 @@ const store = useCampsitesStore();
 const {
     isLoading,
     campsites,
+    campingExisteDeja
 } = storeToRefs(store);
+
+const equipements = [
+    "électricité",
+    "eau",
+    "égout",
+    "feu de camp",
+    "table de pique-nique",
+    "abri",
+    "wifi",
+    "douche",
+    "toilettes"
+];
+
+const messageErreur = computed(() => validationErrors.value);
+const isFormValid = computed(() => validationErrors.value.length === 0);
+
+const campsiteTemp = ref({});
 
 async function supprimerCampsite(id) {
     await store.supprimerUnCampsite(id);
 }
+
+async function modifierEmplacement(id) {
+    if (isFormValid.value) {
+        const { esSuccees } = await store.modifierUnCampsite(id, campsiteTemp.value);
+
+        if (esSuccees){
+            console.log("Ok");
+        }
+    }
+}
+
+function viderChampsValidation() {
+    messageErreur.value = [];
+}
+
+const validationErrors = computed(() => {
+    const errors = [];
+
+    if (!campsiteTemp.value?.name?.length) { errors.push("name"); }
+
+    if (!campsiteTemp.value?.location?.length) { errors.push("location"); }
+
+    if (!campsiteTemp.value?.type) { errors.push("type"); }
+
+    if (campsiteTemp.value?.pricePerNight < 0) { errors.push("pricePerNight"); }
+
+    if (campsiteTemp.value?.capacity < 1) { errors.push("capacity"); }
+
+    if (campsiteTemp.value?.type === "vr" &&
+        (!campsiteTemp.value?.maxVehicleLength || campsiteTemp.value.maxVehicleLength < 1)) {
+        errors.push("maxVehicleLength");
+    }
+
+    return errors;
+});
 
 onMounted(() => {
     campsites.value = store.getCampsites();

@@ -11,6 +11,7 @@ export const useCampsitesStore = defineStore('campsites', () => {
   const campsite = ref({});
   const campsites = ref([]);
   const isLoading = ref(false);
+  const campingExisteDeja = ref(false);
 
   const dateDebut = ref('');
   const dateFin = ref('');
@@ -207,6 +208,39 @@ export const useCampsitesStore = defineStore('campsites', () => {
     }
   }
 
+  
+  /**
+   * Modifier un campsite
+   * @async Attend la réponse de l'api
+   * @param {*} id Id de l'emplacement
+   * @param {*} body Corps incluant les champs modifiés
+   * @returns {*} {Opération est effectué avec succèes, Est un erreur 409} 
+   */
+  async function modifierUnCampsite(id, body) {
+    let url = '/api/campsites/' + id;
+    let esSuccees = false;
+    campingExisteDeja.value = false;
+
+    try {
+      const res = await apiFetch(url, {
+        method: 'PUT',
+        headers: {},
+        body: JSON.stringify(body)
+      });
+      alertStore.success("L'emplacement de camping a été mis à jours avec succèes.");
+    } catch (err) {
+      if (/.409./.test(err)){
+        campingExisteDeja.value = true;
+      }
+      else{
+        alertStore.error("L'emplacement n'a pas pu être mis à jours.");
+      }
+    }
+    finally{
+      return esSuccees;
+    }
+  }
+
   return {
     campsites,
     isLoading,
@@ -223,5 +257,7 @@ export const useCampsitesStore = defineStore('campsites', () => {
     getCampsitesRecherche,
     getCampsitesFiltre,
     supprimerUnCampsite,
+    modifierUnCampsite,
+    campingExisteDeja,
   }
 })
