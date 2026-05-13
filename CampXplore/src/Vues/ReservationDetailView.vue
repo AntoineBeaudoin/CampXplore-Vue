@@ -1,6 +1,4 @@
 <template>
-    <AlertMessage :message="errorMessage" :es-succees="messageEsSuccees" />
-    <AlertMessage :message="successMessage" :es-succees="messageEsSuccees" />
     <div>
         <RouterLink class="link-info" :to="{ name: 'reservations' }">Réservations</RouterLink> / Détails
     </div>
@@ -88,16 +86,14 @@
 </template>
 
 <script setup>
-import { onMounted, computed } from 'vue';
+import { onMounted } from 'vue';
 import { useReservationStore } from '@/stores/reservations.js';
 import { useAuthStore } from '@/stores/auth.js';
 import { storeToRefs } from 'pinia';
-import AlertMessage from '@/components/AlertMessage.vue';
 
 const store = useReservationStore();
 const authStore = useAuthStore();
-const { isLoading, errorMessage, reservation } = storeToRefs(store);
-const messageEsSuccees = computed(() => !errorMessage.value);
+const { isLoading, reservation } = storeToRefs(store);
 
 const props = defineProps({
     id: {

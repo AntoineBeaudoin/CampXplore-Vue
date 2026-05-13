@@ -1,13 +1,14 @@
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { apiFetch } from '@/utils/apiFetch.js';
 import { useRouter } from 'vue-router';
 import { useRoute } from 'vue-router';
+import { useAlertStore } from '@/stores/alert.js';
 
+const alertStore = useAlertStore();
 
 export const useReservationStore = defineStore('reservations', () => {
     const isLoading = ref('');
-    const errorMessage = ref('');
     const typeStatut = ref('');
     const reservations = ref([]);
     const reservation = ref({});
@@ -18,7 +19,6 @@ export const useReservationStore = defineStore('reservations', () => {
         reservations.value = [];
         try {
             isLoading.value = true;
-            errorMessage.value = "";
 
             const fetched = await apiFetch('/api/reservations', {
                 method: 'GET',
@@ -26,7 +26,7 @@ export const useReservationStore = defineStore('reservations', () => {
             });
             reservations.value = fetched.data;
         } catch (err) {
-            errorMessage.value = "Une erreure s'est produite lors du chargement des réservations";
+            alertStore.error("Une erreure s'est produite lors du chargement des réservations");
         }
         finally {
             isLoading.value = false;
@@ -37,7 +37,6 @@ export const useReservationStore = defineStore('reservations', () => {
         reservation.value = {};
         try {
             isLoading.value = true;
-            errorMessage.value = "";
 
             const fetched = await apiFetch('/api/reservations/' + id, {
                 method: 'GET',
@@ -45,7 +44,7 @@ export const useReservationStore = defineStore('reservations', () => {
             });
             reservation.value = fetched.data;
         } catch (err) {
-            errorMessage.value = "Une erreure s'est produite lors du chargement de la réservation";
+            alertStore.error("Une erreure s'est produite lors du chargement de la réservation");
             if (err.status === 404) {
                 router.replace({ name: "NotFound" });
             }
@@ -58,7 +57,6 @@ export const useReservationStore = defineStore('reservations', () => {
     async function patchReservationStatut(newStatus) {
         try {
             isLoading.value = true;
-            errorMessage.value = "";
             const reservationId = route.params.id;
 
             await apiFetch('/api/reservations/' + reservationId, {
@@ -70,8 +68,9 @@ export const useReservationStore = defineStore('reservations', () => {
                     })
             });
             reservation.value = getReservationById(reservationId);
+            alertStore.success('La réservation a été mise à jours avec succès');
         } catch (err) {
-            errorMessage.value = "Une erreure s'est produite lors de la modification du statut de la réservation";
+            alertStore.error("Une erreure s'est produite lors de la modification du statut de la réservation");
             if (err.status === 404) {
                 router.replace({ name: "NotFound" });
             }
@@ -84,7 +83,6 @@ export const useReservationStore = defineStore('reservations', () => {
     async function patchReservationStatutFromList(newStatus, reservationId) {
         try {
             isLoading.value = true;
-            errorMessage.value = "";
 
             await apiFetch('/api/reservations/' + reservationId, {
                 method: 'PATCH',
@@ -98,9 +96,9 @@ export const useReservationStore = defineStore('reservations', () => {
             if (index !== -1) {
                 reservations.value[index].status = newStatus;
             }
-
+            alertStore.success("La réservation a été mise à jours avec succès");
         } catch (err) {
-            errorMessage.value = "Une erreure s'est produite lors de la modification du statut de la réservation";
+            alertStore.error("Une erreure s'est produite lors de la modification du statut de la réservation");
         } finally {
             isLoading.value = false;
         }
@@ -113,7 +111,6 @@ export const useReservationStore = defineStore('reservations', () => {
         }
         try {
             isLoading.value = true;
-            errorMessage.value = "";
 
             const fetched = await apiFetch(url, {
                 method: 'GET',
@@ -121,7 +118,7 @@ export const useReservationStore = defineStore('reservations', () => {
             });
             reservations.value = fetched.data;
         } catch (err) {
-            errorMessage.value = err;
+            alertStore.error(err);
         }
         finally {
             isLoading.value = false;
@@ -131,7 +128,6 @@ export const useReservationStore = defineStore('reservations', () => {
     return {
         getReservations,
         isLoading,
-        errorMessage,
         reservations,
         getReservationById,
         reservation,

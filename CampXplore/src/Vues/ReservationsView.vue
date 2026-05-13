@@ -1,6 +1,4 @@
 <template>
-    <AlertMessage :message="errorMessage" :es-succees="messageEsSuccees" />
-    <AlertMessage :message="successMessage" :es-succees="messageEsSuccees" />
     <h1>Mes réservations</h1>
     <div class="container mt-3 overflow-scroll">
         <p v-if="isLoading" class="d-block">Chargement en cours...</p>
@@ -51,7 +49,6 @@
 </template>
 
 <script setup>
-import AlertMessage from '@/components/AlertMessage.vue';
 import { onMounted } from 'vue';
 import { useReservationStore } from '@/stores/reservations.js';
 import { storeToRefs } from 'pinia';
@@ -59,7 +56,6 @@ import { storeToRefs } from 'pinia';
 const store = useReservationStore();
 const {
     isLoading,
-    errorMessage,
     reservations,
 } = storeToRefs(store);
 

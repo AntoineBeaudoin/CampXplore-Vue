@@ -1,7 +1,5 @@
 <template>
     <h1>Mon profile</h1>
-    <AlertMessage :message="errorMessage" :es-succees="messageEsSuccees"/>
-    <AlertMessage :message="successMessage" :es-succees="messageEsSuccees"/>
     <section class="row">
         <div class="col-md-6">
             <form id="formulaire-Profile" class="row col-md-6 border border-black rounded-3 border-3 w-100 my-3 p-3" @submit.prevent="">
@@ -82,8 +80,6 @@
 
 <script setup>
 import { onMounted } from 'vue';
-import { computed } from 'vue';
-import AlertMessage from '@/components/AlertMessage.vue';
 import { useAuthStore } from '@/stores/auth.js';
 import { storeToRefs } from 'pinia';
 
@@ -106,8 +102,6 @@ const {
     newPasswordErrorMessage,
     confirmPasswordErrorMessage
 } = storeToRefs(store);
-
-const messageEsSuccees = computed(() => !errorMessage.value);
 
 async function resetFormProfile(){
     await store.getProfile();
