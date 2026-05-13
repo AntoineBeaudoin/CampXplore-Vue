@@ -1,14 +1,16 @@
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { apiFetch } from '@/utils/apiFetch.js';
 import { jwtDecode } from "jwt-decode";
+import { useAlertStore } from '@/stores/alert.js';
+
 
 export const useAuthStore = defineStore('auth', () => {
   const MESSAGE_ERREUR_MDP = "Le mot de passe doit être au moins 10 charactère " +
-    "de long en ayant au moins une majuscule, un chiffre et un charactère spécial";
+  "de long en ayant au moins une majuscule, un chiffre et un charactère spécial";
 
+  const alertStore = useAlertStore();
   const errorMessage = ref('');
-  const successMessage = ref('');
 
   const email = ref('');
   const pwd = ref('');
@@ -47,6 +49,7 @@ export const useAuthStore = defineStore('auth', () => {
       });
       const data = fetched.data;
       localStorage.setItem('jwt', data.token);
+      alertStore.success("Connexion effectué avec succèes!");
     } catch (err) {
       errorMessage.value = "Nom d'utilisateur ou mot de passe non valide";
       console.log("Err ", err);
@@ -109,7 +112,7 @@ export const useAuthStore = defineStore('auth', () => {
       pwdErrorMessage.value = MESSAGE_ERREUR_MDP;
     }
     if (!isValid) {
-      errorMessage.value = "Il y a au moins une erreur dans le formulaire";
+      alertStore.error("Il y a au moins une erreur dans le formulaire");
     }
     return isValid;
   }
@@ -136,9 +139,9 @@ export const useAuthStore = defineStore('auth', () => {
               role: "user"
             })
         });
+        alertStore.success("Votre compte a bien été créer!");
       } catch (err) {
-        errorMessage.value = "Une erreur est survenue";
-        console.log("Err ", err);
+        alertStore.error("Une erreur est survenue: " + err);
       }
     }
   }
@@ -161,8 +164,7 @@ export const useAuthStore = defineStore('auth', () => {
       telephone.value = fetched.data.phone;
       role.value = fetched.data.role;
     } catch (err) {
-      errorMessage.value = "Une erreur est survenue lors de l'obtention du profile utilisateur";
-      console.log("Err ", err);
+      alertStore.error("Une erreur est survenue lors de l'obtention du profile utilisateur: " + err);
     }
   }
 
@@ -171,7 +173,6 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   function validerMajProfile() {
-    errorMessage.value = '';
     prenomErrorMessage.value = '';
     nomErrorMessage.value = '';
     telephoneErrorMessage.value = '';
@@ -182,7 +183,7 @@ export const useAuthStore = defineStore('auth', () => {
       telephoneErrorMessage.value = "Le numéro de téléphone doit contenir 10 chiffres";
     }
     if (!isValid) {
-      errorMessage.value = "Il y a au moins une erreur dans le formulaire";
+      alertStore.error("Il y a au moins une erreur dans le formulaire");
     }
     return isValid;
   }
@@ -194,7 +195,6 @@ export const useAuthStore = defineStore('auth', () => {
    * @returns {*} 
    */
   async function majProfile() {
-    successMessage.value = "";
     errorMessage.value = "";
     if (validerMajProfile()) {
       try {
@@ -209,10 +209,9 @@ export const useAuthStore = defineStore('auth', () => {
               role: role.value
             })
         });
-        successMessage.value = "La mise à jours du profile a été effectué avec succèes!";
+        alertStore.success("La mise à jours du profile a été effectué avec succèes!");
       } catch (err) {
-        errorMessage.value = "Une erreur est survenue lors de la mise à jours du profile utilisateur";
-        console.log("Err ", err);
+        alertStore.error("Une erreur est survenue lors de la mise à jours du profile utilisateur: " + err);
       }
     }
   }
@@ -232,11 +231,10 @@ export const useAuthStore = defineStore('auth', () => {
       confirmPasswordErrorMessage.value = "Vous devez confirmer votre nouveau mot de passe";
     }
     if (!isValid) {
-      errorMessage.value = "Veuillez corriger les erreurs du formulaire de changement de mot de passe";
+      alertStore.warning("Veuillez corriger les erreurs du formulaire de changement de mot de passe");
     }
     return isValid;
   }
-
 
   /**
    * Modifie le mot de passe de l'utilisateur connecté
@@ -244,7 +242,6 @@ export const useAuthStore = defineStore('auth', () => {
    * @returns {*} 
    */
   async function modifierMdp() {
-    successMessage.value = "";
     errorMessage.value = "";
     currentPasswordErrorMessage.value = "";
     newPasswordErrorMessage.value = "";
@@ -260,10 +257,9 @@ export const useAuthStore = defineStore('auth', () => {
               newPassword: newPassword.value
             })
         });
-        successMessage.value = "La mise à jours du mot de passe a été effectué avec succèes!";
+        alertStore.success("La mise à jours du mot de passe a été effectué avec succèes!");
       } catch (err) {
-        errorMessage.value = "Une erreur est survenue lors de la mise à jours du mot de passe";
-        console.log("Err ", err);
+        alertStore.error("Une erreur est survenue lors de la mise à jours du mot de passe: " + err);
       }
     }
   }
@@ -305,7 +301,6 @@ export const useAuthStore = defineStore('auth', () => {
     getProfile,
     role,
     majProfile,
-    successMessage,
     currentPassword,
     newPassword,
     confirmPassword,

@@ -4,9 +4,10 @@ import { apiFetch } from '@/utils/apiFetch.js';
 import { useAlertStore } from '@/stores/alert.js';
 import { useAuthStore } from './auth';
 
-const alertStore = useAlertStore();
 
 export const useCampsitesStore = defineStore('campsites', () => {
+  const alertStore = useAlertStore();
+  
   const campsite = ref({});
   const campsites = ref([]);
   const isLoading = ref(false);

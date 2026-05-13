@@ -54,6 +54,9 @@ import { useRoute } from 'vue-router';
 import { useAuthStore } from '@/stores/auth.js';
 import { storeToRefs } from 'pinia';
 import { jwtDecode } from "jwt-decode";
+import { useAlertStore } from '@/stores/alert.js';
+
+const alertStore = useAlertStore();
 
 const store = useAuthStore();
 const {
@@ -64,7 +67,6 @@ const {
     role,
     pwd,
     currentPassword,
-    successMessage
 } = storeToRefs(store);
 
 const tokenRef = ref(getToken());
@@ -93,7 +95,7 @@ function logout() {
     role.value = "";
     currentPassword.value = "";
     pwd.value = "";
-    successMessage.value = "Déconnexion effectué avec succès";
+    alertStore.success("Déconnexion effectué avec succès");
 };
 
 onMounted(() => {

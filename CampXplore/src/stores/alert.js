@@ -47,6 +47,9 @@ export const useAlertStore = defineStore('alert', () => {
   }
 
   return {
+    message,
+    isVisible,
+    type,
     success,
     error,
     warning,

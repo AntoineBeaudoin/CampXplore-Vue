@@ -90,11 +90,9 @@ const {
     nom,
     telephone, 
     role,
-    errorMessage,
     nomErrorMessage,
     prenomErrorMessage,
     telephoneErrorMessage,
-    successMessage,
     currentPassword,
     newPassword,
     confirmPassword,
@@ -105,8 +103,6 @@ const {
 
 async function resetFormProfile(){
     await store.getProfile();
-    errorMessage.value = "";
-    successMessage.value = "";
     nomErrorMessage.value = "";
     prenomErrorMessage.value = "";
     telephoneErrorMessage.value = "";
@@ -117,8 +113,6 @@ async function submitFormMdp() {
 }
 
 async function resetFormMdp(){
-    errorMessage.value = "";
-    successMessage.value = "";
     currentPassword.value = "";
     newPassword.value = "";
     confirmPassword.value = "";
