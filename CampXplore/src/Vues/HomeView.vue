@@ -82,7 +82,7 @@ const resetForm = async () => {
   dateFin.value = '';
   nbPlacesMin.value = '';
   typeCampsite.value = '';
-  await store.getCampsites();
+  campsites.value = [];
 }
 
 async function submitForm() {

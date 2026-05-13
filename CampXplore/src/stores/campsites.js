@@ -7,7 +7,7 @@ import { useAuthStore } from './auth';
 
 export const useCampsitesStore = defineStore('campsites', () => {
   const alertStore = useAlertStore();
-  
+
   const campsite = ref({});
   const campsites = ref([]);
   const isLoading = ref(false);
@@ -128,7 +128,7 @@ export const useCampsitesStore = defineStore('campsites', () => {
    */
   async function getCampsitesRecherche() {
     if (!validateForm()) {
-      return await getCampsites();
+      return [];
     }
     let url = '/api/campsites';
     if (dateDebut.value && dateFin.value) {
