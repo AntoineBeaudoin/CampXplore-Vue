@@ -87,6 +87,19 @@ export const useAuthStore = defineStore('auth', () => {
     pwdCErrorMessage.value = '';
   }
 
+  
+  /** 
+   * Vide le champs pour la modification du mot de passe 
+   */
+  function resetModificationMdp(){
+    currentPassword.value = "";
+    newPassword.value = "";
+    confirmPassword.value = "";
+    currentPasswordErrorMessage.value = "";
+    newPasswordErrorMessage.value = "";
+    confirmPasswordErrorMessage.value = "";
+  }
+
   /**
    * Valide que les champs prenom, nom, email et téléphone ne sont pas vide
    * et instancie leur messages d'erreur.
@@ -372,6 +385,8 @@ export const useAuthStore = defineStore('auth', () => {
     confirmPasswordErrorMessage,
     modifierMdp,
     isUserAdmin,
-    resetRegisterForm
+    resetRegisterForm,
+    resetModificationMdp,
+    resetChampsErreur
   }
 })
