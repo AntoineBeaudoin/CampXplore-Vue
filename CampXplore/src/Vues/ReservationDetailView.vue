@@ -80,7 +80,39 @@
             </div>
         </section>
         <div v-else>
-            Impossible de charger la réservation
+            Impossible de charger la réservation...
+        </div>
+        <section v-if="reservation && reservation.user && authStore.isUserAdmin()" class="row gap-3 align-items-start mt-3">
+            <div class="border rounded p-0 col-md-7">
+                <div class="row col-12 bg-info border rounded w-100 m-0 pt-3">
+                    <p class="col-sm-6"><strong>Informations du client</strong></p>
+                </div>
+                <div class="p-3 pb-0">
+                    <div class="row">
+                        <p class="col-sm-6"><strong>Prénom</strong></p>
+                        <p class="col-sm-6">{{ reservation.user.firstName }}</p>
+                    </div>
+                    <div class="row">
+                        <p class="col-sm-6"><strong>Nom</strong></p>
+                        <p class="col-sm-6">{{ reservation.user.lastName }}</p>
+                    </div>
+                    <div class="row">
+                        <p class="col-sm-6"><strong>Courriel</strong></p>
+                        <p class="col-sm-6">{{ reservation.user.email }}</p>
+                    </div>
+                    <div class="row">
+                        <p class="col-sm-6"><strong>Téléphone</strong></p>
+                        <p class="col-sm-6">{{ reservation.user.phone }}</p>
+                    </div>
+                    <div class="row">
+                        <p class="col-sm-6"><strong>Rôle</strong></p>
+                        <p class="col-sm-6">{{ reservation.user.role }}</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div v-else-if="authStore.isUserAdmin()">
+            Impossible de charger l'utilisateur titulaire de la réservation...
         </div>
     </div>
 </template>
