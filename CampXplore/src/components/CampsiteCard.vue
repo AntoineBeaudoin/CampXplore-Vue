@@ -1,6 +1,6 @@
 <template>
     <div class="col">
-        <div class="card shadow-sm h-100">
+        <div class="card shadow-sm" :class="{ 'h-100': afficherBtnNavReservation }">
             <div class="card-body">
                 <div class="d-flex align-items-start justify-content-between">
                     <h2>{{ campsite.name }}</h2>
@@ -23,7 +23,7 @@
                     </div>
                 </div>
                 <div>
-                    <RouterLink class="btn btn-primary position-absolute bottom-0 end-0 m-3"
+                    <RouterLink v-if="afficherBtnNavReservation" class="btn btn-primary position-absolute bottom-0 end-0 m-3"
                         :to="{ name: 'CampsitesDetails', params: { id: campsite._id } }">Réserver</RouterLink>
                 </div>
             </div>
@@ -60,5 +60,9 @@ defineProps({
         type: Object,
         required: true,
     },
+    afficherBtnNavReservation: {
+        type: Boolean,
+        default: true
+    }
 })
 </script>

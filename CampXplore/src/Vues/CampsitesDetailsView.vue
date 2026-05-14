@@ -1,26 +1,78 @@
 <template>
     <p v-if="isLoading">Chargement en cours...</p>
-    <p v-else-if="errorMessage" class="col-12 text-danger">{{ errorMessage }}</p>
-    <CampsiteCard :campsite="campsite"></CampsiteCard>
+    <div class="row">
+        <CampsiteCard class="col-md-6" :campsite="campsite" :afficherBtnNavReservation="false"></CampsiteCard>
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Faire une réservation</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">Date d'arrivée</label>
+                        <input type="date" class="form-control" v-model="reservationTemp.startDate"
+                            :class="{ 'is-invalid': erreursAjoutReservation.startDate }" />
+                        <div class="invalid-feedback">La date d'arrivée est obligatoire et ne peut pas être dans le
+                            passé.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Date de départ</label>
+                        <input type="date" class="form-control" v-model="reservationTemp.endDate"
+                            :class="{ 'is-invalid': erreursAjoutReservation.endDate }" />
+                        <div class="invalid-feedback">La date de départ est obligatoire et doit être plus tard que la
+                            date de début.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Nombre de personnes</label>
+                        <input type="number" class="form-control" min="1" v-model.number="reservationTemp.guests"
+                            :class="{ 'is-invalid': erreursAjoutReservation.guests }" />
+                        <div class="invalid-feedback">Le nombre de personnes doit être plus grand que 1 et plus petit ou
+                            égal que la capacité de l'emplacement.</div>
+                    </div>
+                    <div v-if="campsite.type === 'vr'" class="mb-3">
+                        <label class="form-label">Longueur du véhicule (m)</label>
+                        <input type="number" class="form-control" min="1" v-model.number="reservationTemp.maxVehicleLength"
+                            :class="{ 'is-invalid': erreursAjoutReservation.maxVehicleLength }" />
+                        <div class="invalid-feedback">La longueur ne peut pas dépasser {{ campsite.maxVehicleLength }}
+                            m.
+                        </div>
+                    </div>
+                    <button class="btn btn-success w-100" @click="creerReservation">Confirmer la réservation</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script setup>
-    import {onMounted} from 'vue';
-    import CampsiteCard from '@/components/CampsiteCard.vue';
-    import { useCampsitesStore } from '@/stores/campsites.js';
-    import { storeToRefs } from 'pinia';
+import { onMounted } from 'vue';
+import CampsiteCard from '@/components/CampsiteCard.vue';
+import { useCampsitesStore } from '@/stores/campsites.js';
+import { useReservationStore } from '@/stores/reservations.js';
+import { storeToRefs } from 'pinia';
 
-    const store = useCampsitesStore();
-    const { isLoading, campsite, errorMessage } = storeToRefs(store);
+const store = useCampsitesStore();
+const reservationsStore = useReservationStore();
+const { isLoading, campsite } = storeToRefs(store);
+const { reservationTemp, erreursAjoutReservation } = storeToRefs(reservationsStore);
 
-    const props = defineProps({
-        id: {
-            type: [String, Number],
-            required: true,
-        }
-    })
+const creerReservation = () => {
+    if (reservationsStore.validerAjoutReservation(campsite.value)) {
+        reservationTemp.value.campsite = campsite.value._id;
+        console.log(reservationTemp.value);
+        reservationsStore.postReservation(reservationTemp.value);
+    }
 
-    onMounted(() => {
-        store.getCampsite(props.id);
-    })
+};
+
+const props = defineProps({
+    id: {
+        type: [String, Number],
+        required: true,
+    }
+})
+
+onMounted(async () => {
+    await store.getCampsite(props.id);
+})
 </script>

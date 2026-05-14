@@ -125,6 +125,123 @@ export const useReservationStore = defineStore('reservations', () => {
         }
     }
 
+    /**
+     * Réservation temporaire représentant la réservation à ajouter
+     * @type {*} Réservation
+     */
+    const reservationTemp = ref({
+        campsite: "",
+        startDate: "",
+        endDate: "",
+        guests: "",
+        maxVehicleLength: null,
+    });
+
+    /**
+     * Indique les erreures dans la création d'une réservation
+     * @type {*} Références d'erreurs
+     */
+    const erreursAjoutReservation = ref({
+        startDate: false,
+        endDate: false,
+        guests: false,
+        maxVehicleLength: false,
+    });
+
+    /**
+     * Valide que la date de début de la réservation est valide pour sa création
+     * @param {*} dDebut Date de début
+     * @param {*} aujourdHui Date d'ajourd'hui
+     * @returns {boolean} Indique si la date de début est valide
+     */
+    function dateDebutEsValid(dDebut, aujourdHui) {
+        return dDebut >= aujourdHui;
+    }
+
+    /**
+     * Valide que la date de début est avant la date de fin
+     * @param {*} dDebut Date de début
+     * @param {*} dFin Date de fin
+     * @returns {boolean} Indique si la date de fin est valide
+     */
+    function dateFinEsValid(dDebut, dFin) {
+        return dFin > dDebut;
+    }
+
+    /**
+     * Valide que le nombre d'invités est valide
+     * @returns {boolean} Indique si le nombre d'invités est valide
+     */
+    function nbInvitesEsValid(campsite) {
+        return reservationTemp.value.guests >= 1 &&
+            reservationTemp.value.guests <= campsite.capacity;
+    }
+
+    /**
+     * Valide que la longuer du véhicule est valide
+     * @returns {boolean} Indique si la longuer du véhicule est valide
+     */
+    function maxVehicleLengthEsValid(campsite) {
+        return reservationTemp.value.maxVehicleLength >= 1 &&
+            reservationTemp.value.maxVehicleLength <= campsite.maxVehicleLength;
+    }
+
+    /**
+     * Valide que tous les champs sont valide pour l'ajout d'une réservation
+     * @param {*} campsite Le campsite où faire la réservation
+     * @returns {boolean} Indique si la réservation peut être effectué
+     */
+    function validerAjoutReservation(campsite) {
+        const aujourdHui = new Date().setHours(0, 0, 0, 0);
+        const dDebut = new Date(reservationTemp.value.startDate);
+        const dFin = new Date(reservationTemp.value.endDate);
+
+        erreursAjoutReservation.value.startDate = !dateDebutEsValid(dDebut, aujourdHui);
+        erreursAjoutReservation.value.endDate = !dateFinEsValid(dDebut, dFin);
+        erreursAjoutReservation.value.guests = !nbInvitesEsValid(campsite);
+
+        if (campsite.type === 'vr') {
+            erreursAjoutReservation.value.maxVehicleLength = !maxVehicleLengthEsValid(campsite);
+        }
+
+        return !erreursAjoutReservation.value.startDate &&
+            !erreursAjoutReservation.value.endDate &&
+            !erreursAjoutReservation.value.guests &&
+            !erreursAjoutReservation.value.maxVehicleLength;
+    };
+
+    /**
+     * Ajouter une réservation
+     * @async Attend la réponse de l'API
+     * @param {*} body Données de la réservation
+     * @returns {*} Message indiquant le résultat de l'opération
+     */
+    async function postReservation(body) {
+        let url = '/api/reservations';
+        try {
+            await apiFetch(url, {
+                method: 'POST',
+                headers: {},
+                body: JSON.stringify({
+                    campsite: body.campsite,
+                    startDate: body.startDate,
+                    endDate: body.endDate,
+                    guests: body.guests,
+                    vehicleLength: body.maxVehicleLength
+                })
+            });
+            alertStore.success("Réservation créer avec succèes");
+        }
+        catch (err) {
+            if (/.409./.test(err)) {
+                alertStore.error("L'emplacement n'est pas disponible pour les dates sélectionnées.");
+            }
+            else {
+                alertStore.error("Une erreur est survenue lors de la réservation");
+            }
+        }
+    }
+
     return {
         getReservations,
         isLoading,
@@ -134,6 +251,10 @@ export const useReservationStore = defineStore('reservations', () => {
         patchReservationStatut,
         patchReservationStatutFromList,
         typeStatut,
-        getReservationsFiltre
+        getReservationsFiltre,
+        postReservation,
+        validerAjoutReservation,
+        erreursAjoutReservation,
+        reservationTemp
     }
 })
