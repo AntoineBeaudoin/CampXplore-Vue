@@ -55,7 +55,8 @@
                                                     <span v-show="validationErrors.includes('name')"
                                                         class="text-danger">Le
                                                         nom est requis</span>
-                                                    <span v-show="campingExisteDeja" class="text-danger">Le
+                                                    <span v-show="campingExisteDeja || campingExisteDejaValClient"
+                                                        class="text-danger">Le
                                                         nom et le lieu appartient déjà à un autre emplacement</span>
                                                 </div>
                                                 <div class="col-md-6 text-start">
@@ -64,7 +65,8 @@
                                                         class="form-control" v-model="campsiteTemp.location" />
                                                     <span v-show="validationErrors.includes('location')"
                                                         class="text-danger">Le lieu est requis</span>
-                                                    <span v-show="campingExisteDeja" class="text-danger">Le
+                                                    <span v-show="campingExisteDeja || campingExisteDejaValClient"
+                                                        class="text-danger">Le
                                                         nom et le lieu appartient déjà à un autre emplacement</span>
                                                 </div>
                                             </div>
@@ -135,8 +137,8 @@
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary"
                                             data-bs-dismiss="modal">Annuler</button>
-                                        <button v-if="isFormValid && !campingExisteDeja" type="button" class="btn btn-danger"
-                                            data-bs-dismiss="modal"
+                                        <button v-if="isFormValid && !campingExisteDeja && !campingExisteDejaValClient"
+                                            type="button" class="btn btn-danger" data-bs-dismiss="modal"
                                             @click="modifierEmplacement(item._id, index)">Enregistrer</button>
                                         <button v-else type="button" class="btn btn-success"
                                             @click="modifierEmplacement(item._id, index)">Enregistrer</button>
@@ -213,7 +215,7 @@ async function modifierEmplacement(id) {
     if (isFormValid.value) {
         const { esSuccees } = await store.modifierUnCampsite(id, campsiteTemp.value);
 
-        if (esSuccees){
+        if (esSuccees) {
             console.log("Ok");
         }
     }
@@ -222,6 +224,14 @@ async function modifierEmplacement(id) {
 function viderChampsValidation() {
     messageErreur.value = [];
 }
+
+const campingExisteDejaValClient = computed(() => {
+    return campsites.value.some(campsite =>
+        campsite._id !== campsiteTemp.value._id &&
+        campsite.name === campsiteTemp.value.name &&
+        campsite.location === campsiteTemp.value.location
+    );
+});
 
 const validationErrors = computed(() => {
     const errors = [];
