@@ -35,7 +35,7 @@
                     <td class="text-end">
                         <button type="button" class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="modal"
                             :data-bs-target="'#modifyModal' + index"
-                            @click="campsiteTemp = { ...item }; viderChampsValidation()">Modifier</button>
+                            @click="campsiteTemp = { ...item }">Modifier</button>
                         <div class="modal fade" :id="'modifyModal' + index" tabindex="-1"
                             aria-labelledby="modifyModalLabel" aria-hidden="true">
                             <div class="modal-dialog modal-lg">
@@ -112,13 +112,13 @@
                                             <div v-if="campsiteTemp.type === 'vr'" class="text-start">
                                                 <label for="modifierCarLength" class="form-label">Longuer du véhicule
                                                     *</label>
-                                                <input for="modifierCarLength" id="modifierCarLength" type="text"
+                                                <input for="modifierCarLength" id="modifierCarLength" type="number"
                                                     class="form-control" v-model="campsiteTemp.maxVehicleLength" />
                                                 <span v-show="validationErrors.includes('maxVehicleLength')"
                                                     class="text-danger">La longueur du véhicule est requise</span>
                                             </div>
                                             <div class="mb-3 text-start">
-                                                <label :for="equipement" class="form-label fw-bold">Équipements</label>
+                                                <label class="form-label fw-bold">Équipements</label>
                                                 <div class="row">
                                                     <div class="col-md-4 mb-2" v-for="equipement in equipements"
                                                         :key="equipement">
@@ -138,7 +138,7 @@
                                         <button type="button" class="btn btn-secondary"
                                             data-bs-dismiss="modal">Annuler</button>
                                         <button v-if="isFormValid && !campingExisteDeja && !campingExisteDejaValClient"
-                                            type="button" class="btn btn-danger" data-bs-dismiss="modal"
+                                            type="button" class="btn btn-success" data-bs-dismiss="modal"
                                             @click="modifierEmplacement(item._id, index)">Enregistrer</button>
                                         <button v-else type="button" class="btn btn-success"
                                             @click="modifierEmplacement(item._id, index)">Enregistrer</button>
@@ -160,7 +160,10 @@
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                             aria-label="Close"></button>
                                     </div>
-                                    <div class="modal-body">Voulez-vous vraiment supprimer ce campsite?</div>
+                                    <div class="modal-body">
+                                        <p>Voulez-vous vraiment supprimer ce campsite?</p>
+                                        <p class="text-danger">{{ item.name }} - {{ item.location }}</p>
+                                    </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary"
                                             data-bs-dismiss="modal">Annuler</button>
@@ -202,7 +205,6 @@ const equipements = [
     "toilettes"
 ];
 
-const messageErreur = computed(() => validationErrors.value);
 const isFormValid = computed(() => validationErrors.value.length === 0);
 
 const campsiteTemp = ref({});
@@ -213,16 +215,8 @@ async function supprimerCampsite(id) {
 
 async function modifierEmplacement(id) {
     if (isFormValid.value) {
-        const { esSuccees } = await store.modifierUnCampsite(id, campsiteTemp.value);
-
-        if (esSuccees) {
-            console.log("Ok");
-        }
+        await store.modifierUnCampsite(id, campsiteTemp.value);
     }
-}
-
-function viderChampsValidation() {
-    messageErreur.value = [];
 }
 
 const campingExisteDejaValClient = computed(() => {

@@ -199,16 +199,16 @@ export const useCampsitesStore = defineStore('campsites', () => {
       alertStore.success("L'emplacement de camping a été supprimé avec succèes.");
     }
     catch (err) {
-      if (/.409./.test(err)){
+      if (/.409./.test(err)) {
         alertStore.error("L'emplacement ne peut pas être supprimé car il possède des réservations en cours ou non terminées.");
       }
-      else{
+      else {
         alertStore.error("L'emplacement n'a pas pu être supprimé.");
       }
     }
   }
 
-  
+
   /**
    * Modifier un campsite
    * @async Attend la réponse de l'api
@@ -218,7 +218,6 @@ export const useCampsitesStore = defineStore('campsites', () => {
    */
   async function modifierUnCampsite(id, body) {
     let url = '/api/campsites/' + id;
-    let esSuccees = false;
     campingExisteDeja.value = false;
 
     try {
@@ -228,16 +227,17 @@ export const useCampsitesStore = defineStore('campsites', () => {
         body: JSON.stringify(body)
       });
       alertStore.success("L'emplacement de camping a été mis à jours avec succèes.");
+      const index = campsites.value.findIndex(c => c._id === id);
+      if (index !== -1) {
+        campsites.value[index] = res.data;
+      }
     } catch (err) {
-      if (/.409./.test(err)){
+      if (/.409./.test(err)) {
         campingExisteDeja.value = true;
       }
-      else{
+      else {
         alertStore.error("L'emplacement n'a pas pu être mis à jours.");
       }
-    }
-    finally{
-      return esSuccees;
     }
   }
 
