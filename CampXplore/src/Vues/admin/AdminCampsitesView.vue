@@ -193,6 +193,9 @@ const {
     campingExisteDeja
 } = storeToRefs(store);
 
+/**
+ * Liste des équipements disponnibles 
+ */
 const equipements = [
     "électricité",
     "eau",
@@ -205,20 +208,37 @@ const equipements = [
     "toilettes"
 ];
 
+/**
+ * Valide dynamiquement si le formulaire est valide
+ */
 const isFormValid = computed(() => validationErrors.value.length === 0);
 
+/**
+ * Variable temporaire de campsite
+ */
 const campsiteTemp = ref({});
 
+/**
+ * Faire un appel à l'API pour supprimer un emplacement
+ * @param id Id de l'emplacement à supprimer
+ */
 async function supprimerCampsite(id) {
     await store.supprimerUnCampsite(id);
 }
 
+/**
+ * Faire un appel à l'API pour modifier un emplacement
+ * @param id Id de l'emplacement
+ */
 async function modifierEmplacement(id) {
     if (isFormValid.value) {
         await store.modifierUnCampsite(id, campsiteTemp.value);
     }
 }
 
+/**
+ * Valide dynamiquement si un emplacement existe déjà
+ */
 const campingExisteDejaValClient = computed(() => {
     return campsites.value.some(campsite =>
         campsite._id !== campsiteTemp.value._id &&
@@ -227,6 +247,9 @@ const campingExisteDejaValClient = computed(() => {
     );
 });
 
+/**
+ * Valide s'il y a des erreurs en temps réel
+ */
 const validationErrors = computed(() => {
     const errors = [];
 
