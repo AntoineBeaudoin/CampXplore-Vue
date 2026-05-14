@@ -36,10 +36,14 @@ export const useAuthStore = defineStore('auth', () => {
   /**
    * Permet à l'utilisateur de se connecter
    * @async Requête sur la route POST de /api/auth/login
-   * @returns {*} 
+   * @returns {*} Bool indiquant si la connexion à été effectué avec succès
    */
   async function login() {
-    errorMessage.value = '';
+    resetChampsErreur();
+    if(!validerCourriel(email.value)){
+      emailErrorMessage.value = "Le format du courriel n'est pas valide";
+      return false;
+    }
     try {
       const fetched = await apiFetch('/api/auth/login', {
         method: 'POST',
@@ -49,8 +53,10 @@ export const useAuthStore = defineStore('auth', () => {
       const data = fetched.data;
       localStorage.setItem('jwt', data.token);
       alertStore.success("Connexion effectué avec succèes!");
+      return true;
     } catch (err) {
-      errorMessage.value = "Nom d'utilisateur ou mot de passe non valide";
+      errorMessage.value = "Nom d'utilisateur ou mot de passe n'est pas valide";
+      return false;
     }
   }
 
@@ -133,7 +139,7 @@ export const useAuthStore = defineStore('auth', () => {
       isValid = false;
       pwdCErrorMessage.value = "Le mot de passe n'est pas pareille";
     }
-    if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email.value)) {
+    if (!validerCourriel(email.value)) {
       isValid = false;
       emailErrorMessage.value = "Le courriel n'a pas le bon format";
     }
@@ -149,6 +155,15 @@ export const useAuthStore = defineStore('auth', () => {
       alertStore.error("Il y a au moins une erreur dans le formulaire");
     }
     return isValid;
+  }
+
+  
+  /**
+   * Valide que le courriel est valide
+   * @returns {*} Indique si le courriel est valide
+   */
+  function validerCourriel(email){
+    return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
   }
 
   /**
@@ -180,7 +195,7 @@ export const useAuthStore = defineStore('auth', () => {
           alertStore.error("Cette adresse courriel est déjà utilisée.");
         }
         else{
-          alertStore.error("Une erreur est survenue: " + err);
+          alertStore.error("Une erreur est survenue");
         }
         return false;
       }
@@ -204,7 +219,7 @@ export const useAuthStore = defineStore('auth', () => {
       telephone.value = fetched.data.phone;
       role.value = fetched.data.role;
     } catch (err) {
-      alertStore.error("Une erreur est survenue lors de l'obtention du profile utilisateur: " + err);
+      alertStore.error("Une erreur est survenue lors de l'obtention du profile utilisateur");
     }
   }
   
@@ -256,7 +271,7 @@ export const useAuthStore = defineStore('auth', () => {
         });
         alertStore.success("La mise à jours du profile a été effectué avec succèes!");
       } catch (err) {
-        alertStore.error("Une erreur est survenue lors de la mise à jours du profile utilisateur: " + err);
+        alertStore.error("Une erreur est survenue lors de la mise à jours du profile utilisateur");
       }
     }
   }
@@ -308,7 +323,7 @@ export const useAuthStore = defineStore('auth', () => {
         });
         alertStore.success("La mise à jours du mot de passe a été effectué avec succèes!");
       } catch (err) {
-        alertStore.error("Une erreur est survenue lors de la mise à jours du mot de passe: " + err);
+        alertStore.error("Une erreur est survenue lors de la mise à jours du mot de passe");
       }
     }
   }
