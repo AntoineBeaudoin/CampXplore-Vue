@@ -25,6 +25,7 @@
         <table class="table table-hover align-middle">
             <thead class="table-light">
                 <tr>
+                    <th>Client</th>
                     <th>Emplacement</th>
                     <th>Arrivée</th>
                     <th>Départ</th>
@@ -42,9 +43,11 @@
                     <td>--</td>
                     <td>--</td>
                     <td>--</td>
+                    <td>--</td>
                     <td class="text-end">--</td>
                 </tr>
                 <tr v-for="(item, index) in reservations" :key="index">
+                    <td>{{ item.user.firstName }} {{ item.user.lastName }}</td>
                     <td>{{ item.campsite.name }}</td>
                     <td>{{ new Date(item.startDate).toLocaleDateString('fr-ca') }}</td>
                     <td>{{ new Date(item.endDate).toLocaleDateString('fr-ca') }}</td>
@@ -113,7 +116,7 @@ async function submitFormFiltre() {
     await store.getReservationsFiltre();
 }
 
-onMounted(() => {
-    reservations.value = store.getReservations();
+onMounted(async () => {
+    await store.getReservations();
 })
 </script>
