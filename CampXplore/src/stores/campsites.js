@@ -214,7 +214,7 @@ export const useCampsitesStore = defineStore('campsites', () => {
    * @async Attend la réponse de l'api
    * @param {*} id Id de l'emplacement
    * @param {*} body Corps incluant les champs modifiés
-   * @returns {*} {Opération est effectué avec succèes, Est un erreur 409} 
+   * @returns {*} Message indiquant le résultat de l'opération
    */
   async function modifierUnCampsite(id, body) {
     let url = '/api/campsites/' + id;
@@ -241,6 +241,29 @@ export const useCampsitesStore = defineStore('campsites', () => {
     }
   }
 
+  
+  /**
+   * Ajouter un emplacement
+   * @async Attend la réponse de l'API
+   * @param {*} body Corps de la requête (champs de l'emplacement)
+   * @returns {*} Message indiquant le résultat de l'opération
+   */
+  async function ajouterUnCampsite(body) {
+    let url = '/api/campsites';
+
+    try {
+      const res = await apiFetch(url, {
+        method: 'POST',
+        headers: {},
+        body: JSON.stringify(body)
+      });
+      alertStore.success("L'emplacement de camping a été ajouté avec succèes.");
+      campsites.value.push(res.data);
+    } catch (err) {
+      alertStore.error("L'emplacement n'a pas pu être ajouté.");
+    }
+  }
+
   return {
     campsites,
     isLoading,
@@ -259,5 +282,6 @@ export const useCampsitesStore = defineStore('campsites', () => {
     supprimerUnCampsite,
     modifierUnCampsite,
     campingExisteDeja,
+    ajouterUnCampsite
   }
 })

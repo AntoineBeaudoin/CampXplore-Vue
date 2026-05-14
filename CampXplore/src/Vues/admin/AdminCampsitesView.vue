@@ -340,9 +340,11 @@ async function supprimerCampsite(id) {
     await store.supprimerUnCampsite(id);
 }
 
+/**
+ * Faire un appel à l'API pour ajouter un emplacement
+ */
 async function ajouterEmplacement() {
-    console.log("Add");
-    console.log(campsiteTemp);
+    await store.ajouterUnCampsite(campsiteTemp.value);
 }
 
 /**
