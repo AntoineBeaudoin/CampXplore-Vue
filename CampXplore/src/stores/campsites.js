@@ -197,6 +197,10 @@ export const useCampsitesStore = defineStore('campsites', () => {
         headers: {}
       });
       alertStore.success("L'emplacement de camping a été supprimé avec succèes.");
+      const index = campsites.value.findIndex(c => c._id === id);
+      if (index !== -1) {
+        campsites.value.splice(index, 1);
+      }
     }
     catch (err) {
       if (/.409./.test(err)) {
