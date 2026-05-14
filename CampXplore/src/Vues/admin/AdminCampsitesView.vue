@@ -4,7 +4,8 @@
         <h1>Gestion des emplacements</h1>
         <div>
             <button type="button" class="btn btn-sm btn-primary me-1 p-2" data-bs-toggle="modal"
-                :data-bs-target="'#addNewModal'" @click="campsiteTemp = { amenities: [] }">Ajouter</button>
+                :data-bs-target="'#addNewModal'"
+                @click="campsiteTemp = { amenities: [], pricePerNight: 0, capacity: 0 }">Ajouter</button>
             <div class="modal fade" :id="'addNewModal'" tabindex="-1" aria-labelledby="addModalLabel"
                 aria-hidden="true">
                 <div class="modal-dialog modal-lg">
@@ -93,8 +94,8 @@
                                             <div class="form-check">
                                                 <input class="form-check-input" type="checkbox" :id="equipement"
                                                     :value="equipement" v-model="campsiteTemp.amenities" />
-                                                <label class="form-check-label" :for="equipement">{{ equipement
-                                                    }}</label>
+                                                <label class="form-check-label" :for="equipement">{{
+                                                    equipement}}</label>
                                             </div>
                                         </div>
                                     </div>
@@ -344,7 +345,9 @@ async function supprimerCampsite(id) {
  * Faire un appel à l'API pour ajouter un emplacement
  */
 async function ajouterEmplacement() {
-    await store.ajouterUnCampsite(campsiteTemp.value);
+    if (isFormValid.value) {
+        await store.ajouterUnCampsite(campsiteTemp.value);
+    }
 }
 
 /**
