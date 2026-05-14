@@ -30,13 +30,13 @@ const router = createRouter({
       meta: { title: "Détails d'un campsite" },
     },
     {
-      path: "/login",
+      path: "/connexion",
       name: "login",
       component: () => import('@/Vues/LoginView.vue'),
       meta: { title: "Se connecter" },
     },
     {
-      path: "/register",
+      path: "/enregistrement",
       name: "register",
       component: () => import('@/Vues/RegisterView.vue'),
       meta: { title: "S'inscrire" },

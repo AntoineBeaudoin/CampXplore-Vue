@@ -33,7 +33,6 @@ export const useAuthStore = defineStore('auth', () => {
   const newPasswordErrorMessage = ref('');
   const confirmPasswordErrorMessage = ref('');
 
-
   /**
    * Permet à l'utilisateur de se connecter
    * @async Requête sur la route POST de /api/auth/login
@@ -52,10 +51,41 @@ export const useAuthStore = defineStore('auth', () => {
       alertStore.success("Connexion effectué avec succèes!");
     } catch (err) {
       errorMessage.value = "Nom d'utilisateur ou mot de passe non valide";
-      console.log("Err ", err);
     }
   }
 
+  /**
+   * Vide le formulaire d'authentification
+   */
+  function resetRegisterForm(){
+    prenom.value = '';
+    nom.value = '';
+    email.value = '';
+    email.value = '';
+    telephone.value = '';
+    pwd.value = '';
+    pwdC.value = '';
+    resetChampsErreur();
+  }
+
+  /**
+   * Vide les messages d'erreur
+   */
+  function resetChampsErreur(){
+    errorMessage.value = '';
+    prenomErrorMessage.value = '';
+    nomErrorMessage.value = '';
+    emailErrorMessage.value = '';
+    telephoneErrorMessage.value = '';
+    pwdErrorMessage.value = '';
+    pwdCErrorMessage.value = '';
+  }
+
+  /**
+   * Valide que les champs prenom, nom, email et téléphone ne sont pas vide
+   * et instancie leur messages d'erreur.
+   * @returns {boolean} 
+   */
   function validerChampsNonVides() {
     let isValid = true;
     if (!prenom.value) {
@@ -77,22 +107,26 @@ export const useAuthStore = defineStore('auth', () => {
     return isValid;
   }
 
-  const mdpValide = (v) => {
+  /**
+   * Valide que le mot de passe est valide
+   * (Au moins 10 charactères, une majuscule, un nombre et un charactère spécial)
+   * @param {*} mdp Le mot de passe à tester
+   * @returns {boolean} Indique si le mot de passe est valide
+   */
+  const mdpValide = (mdp) => {
     const contientMajuscule = (str) => /[A-Z]/.test(str);
     const contientNombre = (str) => /[\d]/.test(str);
     const contientCharSpeciaux = (str) => /[@$!%*?&]/.test(str);
-    const mdpAssezLong = v.length > 10;
-    return contientMajuscule(v) && contientNombre(v) && contientCharSpeciaux(v) && mdpAssezLong;
+    const mdpAssezLong = mdp.length > 10;
+    return contientMajuscule(mdp) && contientNombre(mdp) && contientCharSpeciaux(mdp) && mdpAssezLong;
   };
 
+  /**
+   * Valide que les champs pour le register sont valide
+   * @returns {boolean} Indique si les champs pour le register sont valide
+   */
   function validerRegister() {
-    errorMessage.value = '';
-    prenomErrorMessage.value = '';
-    nomErrorMessage.value = '';
-    emailErrorMessage.value = '';
-    telephoneErrorMessage.value = '';
-    pwdErrorMessage.value = '';
-    pwdCErrorMessage.value = '';
+    resetChampsErreur();
     let isValid = validerChampsNonVides();
 
     if (pwd.value !== pwdC.value) {
@@ -117,11 +151,10 @@ export const useAuthStore = defineStore('auth', () => {
     return isValid;
   }
 
-
   /**
    * Créer un compte utilisateur
    * @async Requête sur la route post de /api/auth/register 
-   * @returns {*} 
+   * @returns {*} Bool indiquant si le register a été effecté avec succès
    */
   async function register() {
     if (validerRegister()) {
@@ -140,12 +173,19 @@ export const useAuthStore = defineStore('auth', () => {
             })
         });
         alertStore.success("Votre compte a bien été créer!");
+        resetRegisterForm();
+        return true;
       } catch (err) {
-        alertStore.error("Une erreur est survenue: " + err);
+        if(/."status":409./.test(err)){
+          alertStore.error("Cette adresse courriel est déjà utilisée.");
+        }
+        else{
+          alertStore.error("Une erreur est survenue: " + err);
+        }
+        return false;
       }
     }
   }
-
 
   /**
    * Récolter les données du compte utilisateur connecté
@@ -167,15 +207,21 @@ export const useAuthStore = defineStore('auth', () => {
       alertStore.error("Une erreur est survenue lors de l'obtention du profile utilisateur: " + err);
     }
   }
-
+  
+  /**
+   * Valide que le numéro de téléphone contient bien 10 chiffres
+   * @returns {*} Booleen indiquant si le numéro de téléphone contient 10 chiffres
+   */
   function validerTelephoneContient10Chiffres() {
     return /\d{10}/.test(telephone.value);
   }
 
+  /**
+   * Valide que les champs pour la mise à jours du profile sont valide
+   * @returns {boolean} Indique si les champs pour la mise à jours du profile sont valide
+   */
   function validerMajProfile() {
-    prenomErrorMessage.value = '';
-    nomErrorMessage.value = '';
-    telephoneErrorMessage.value = '';
+    resetChampsErreur();
     let isValid = validerChampsNonVides();
 
     if (!validerTelephoneContient10Chiffres()) {
@@ -187,7 +233,6 @@ export const useAuthStore = defineStore('auth', () => {
     }
     return isValid;
   }
-
 
   /**
    * Met à jours le profil de l'utilisateur connecté
@@ -215,7 +260,11 @@ export const useAuthStore = defineStore('auth', () => {
       }
     }
   }
-
+  
+  /**
+   * Valide que le mot de passe est valide et affecte les variables d'erreurs en fonction de l'erreur
+   * @returns {boolean} Indique si le mot de passe est valide
+   */
   function validerModifierMdp() {
     let isValid = true;
     if (!currentPassword.value) {
@@ -263,11 +312,10 @@ export const useAuthStore = defineStore('auth', () => {
       }
     }
   }
-
   
   /**
    * Valide si l'utilisateur connecté est un administrateur
-   * @returns {boolean} 
+   * @returns {boolean} Indique si l'utilisateur est connecté
    */
   function isUserAdmin() {
     const token = localStorage.getItem("jwt");
@@ -308,6 +356,7 @@ export const useAuthStore = defineStore('auth', () => {
     newPasswordErrorMessage,
     confirmPasswordErrorMessage,
     modifierMdp,
-    isUserAdmin
+    isUserAdmin,
+    resetRegisterForm
   }
 })
