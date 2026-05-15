@@ -28,7 +28,7 @@ const router = createRouter({
       name: "CampsitesDetails",
       component: () => import('@/Vues/CampsitesDetailsView.vue'),
       props: true,
-      meta: { title: "Détails d'un campsite" },
+      meta: { title: "Détails d'un campsite", requireAuth: true },
     },
     {
       path: "/connexion",
