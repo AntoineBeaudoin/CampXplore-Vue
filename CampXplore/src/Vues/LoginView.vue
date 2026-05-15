@@ -19,7 +19,7 @@
             </form>
             <div class="d-flex justify-content-center mt-3 border-top pt-3 mt-3">
                 <p class="d-inline-block pe-2 mb-0">Pas encore de compte? </p>
-                <router-link :to="{ name: 'login' }" class="link-primary d-inline-block mb-0">S'inscrire</router-link>
+                <router-link :to="{ name: 'register' }" class="link-primary d-inline-block mb-0">S'inscrire</router-link>
             </div>
         </div>
     </div>
