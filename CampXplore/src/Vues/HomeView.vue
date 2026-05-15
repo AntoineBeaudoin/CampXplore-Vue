@@ -49,8 +49,7 @@
         <div v-if="typeCampsite === 'vr'" class="col-md-12 p-3">
           <div>
             <label for="vLength" class="form-label">Longueur du véhicule:</label>
-            <input type="number" id="vLength" name="vLength" class="form-control"
-              v-model.trim="vehicleLength">
+            <input type="number" id="vLength" name="vLength" class="form-control" v-model.trim="vehicleLength">
             <div v-if="vehicleLengthErrorMessage" class="text-danger">{{ vehicleLengthErrorMessage }}</div>
           </div>
         </div>
@@ -66,6 +65,7 @@
     <p v-else-if="errorMessage" class="col-12 text-danger">{{ errorMessage }}</p>
     <p v-else-if="campsites.length === 0" class="col-12">Aucun campsite trouvé - veuillez faire une nouvelle recherche
     </p>
+    <p v-if="campsites.length > 0" class="p-0 m-0 ms-3">Nombre d'emplacements trouvé: {{ campsites.length }}</p>
     <CampsiteCard class="col-12 col-lg-4" v-for="campsite in campsites" :key="campsite._id" :campsite="campsite">
     </CampsiteCard>
   </div>
@@ -111,7 +111,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.baniere{
+.baniere {
   background-image: linear-gradient(to top left, green, lightgreen);
 }
 </style>
