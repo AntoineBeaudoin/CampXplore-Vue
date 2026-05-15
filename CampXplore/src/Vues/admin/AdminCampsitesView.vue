@@ -277,6 +277,7 @@
                                     </div>
                                     <div class="modal-body">
                                         <p>Voulez-vous vraiment supprimer ce campsite?</p>
+                                        <p><strong>CETTE ACTION EST IRRÉVERSIBLE!</strong></p>
                                         <p class="text-danger">{{ item.name }} - {{ item.location }}</p>
                                     </div>
                                     <div class="modal-footer">
