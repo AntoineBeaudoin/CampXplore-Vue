@@ -1,8 +1,10 @@
 <template>
-  <h1 class="text-center">Bienvenue chez CampXplore</h1>
-  <div class="d-flex mx-3 my-4 justify-content-center">
-    <p class="me-3 mb-0 d-inline">Découvrez tous nos sites de camping: </p>
-    <router-link to="/campsites" class="btn btn-primary">Voir tous nos campsites</router-link>
+  <div class="baniere p-3 mb-3">
+    <h1 class="text-center">Bienvenue chez CampXplore</h1>
+    <div class="d-flex mx-3 my-4 justify-content-center">
+      <p class="me-3 mb-0 d-inline mt-2">Découvrez tous nos sites de camping: </p>
+      <router-link to="/campsites" class="btn btn-primary">Voir tous nos campsites</router-link>
+    </div>
   </div>
   <div class=" border rounded text-align-center p-3">
     <h2>Trouver un camping</h2>
@@ -107,3 +109,9 @@ onMounted(() => {
   campsites.value = [];
 })
 </script>
+
+<style scoped>
+.baniere{
+  background-image: linear-gradient(to top left, green, lightgreen);
+}
+</style>
