@@ -31,7 +31,8 @@
                     </div>
                     <div v-if="campsite.type === 'vr'" class="mb-3">
                         <label class="form-label">Longueur du véhicule (m)</label>
-                        <input type="number" class="form-control" min="1" v-model.number="reservationTemp.maxVehicleLength"
+                        <input type="number" class="form-control" min="1"
+                            v-model.number="reservationTemp.maxVehicleLength"
                             :class="{ 'is-invalid': erreursAjoutReservation.maxVehicleLength }" />
                         <div class="invalid-feedback">La longueur ne peut pas dépasser {{ campsite.maxVehicleLength }}
                             m.
@@ -48,7 +49,8 @@
                     <h5 class="mb-0">Faire une réservation</h5>
                 </div>
                 <div class="card-body text-center">
-                    <router-link :to="{ name: 'login' }" class="btn btn-primary">Se connecter pour réserver</router-link>
+                    <router-link :to="{ name: 'login' }" class="btn btn-primary">Se connecter pour
+                        réserver</router-link>
                 </div>
             </div>
         </div>
@@ -62,17 +64,26 @@ import { useCampsitesStore } from '@/stores/campsites.js';
 import { useReservationStore } from '@/stores/reservations.js';
 import { useAuthStore } from '@/stores/auth.js';
 import { storeToRefs } from 'pinia';
+import { useRouter } from 'vue-router';
 
 const store = useCampsitesStore();
 const reservationsStore = useReservationStore();
 const authStore = useAuthStore();
 const { isLoading, campsite } = storeToRefs(store);
 const { reservationTemp, erreursAjoutReservation, prixCourrant } = storeToRefs(reservationsStore);
+const router = useRouter();
 
-const creerReservation = () => {
+/**
+ * Appel l'API pour créer la réservation et redirige vers reservations si l'exécution résulte en succès
+ */
+const creerReservation = async () => {
     if (reservationsStore.validerAjoutReservation(campsite.value)) {
-        reservationTemp.value.campsite = campsite.value._id;
-        reservationsStore.postReservation(reservationTemp.value);
+        const reservationEsCreer = await reservationsStore.postReservation(reservationTemp.value);
+        if (reservationEsCreer) {
+            setTimeout(() => {
+                router.push({ name: "reservations" });
+            }, 2000);
+        }
     }
 };
 
@@ -85,6 +96,7 @@ const props = defineProps({
 
 onMounted(async () => {
     await store.getCampsite(props.id);
+    reservationTemp.value.campsite = campsite.value._id;
     reservationTemp.value.pricePerNight = campsite.value.pricePerNight;
 })
 </script>

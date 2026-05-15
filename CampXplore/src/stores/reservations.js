@@ -228,7 +228,7 @@ export const useReservationStore = defineStore('reservations', () => {
      * Ajouter une réservation
      * @async Attend la réponse de l'API
      * @param {*} body Données de la réservation
-     * @returns {*} Message indiquant le résultat de l'opération
+     * @returns {*} Bool indiquant si l'oppération à été un succès et envoie un message indiquant le résultat de l'opération
      */
     async function postReservation(body) {
         let url = '/api/reservations';
@@ -245,6 +245,7 @@ export const useReservationStore = defineStore('reservations', () => {
                 })
             });
             alertStore.success("Réservation créer avec succèes");
+            return true;
         }
         catch (err) {
             if (/.409./.test(err)) {
@@ -253,6 +254,7 @@ export const useReservationStore = defineStore('reservations', () => {
             else {
                 alertStore.error("Une erreur est survenue lors de la réservation");
             }
+            return false;
         }
     }
 
