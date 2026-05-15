@@ -1,9 +1,9 @@
 <template>
     <p v-if="isLoading">Chargement en cours...</p>
     <div class="row">
-        <CampsiteCard class="col-md-6" :campsite="campsite" :afficherBtnNavReservation="false"></CampsiteCard>
+        <CampsiteCard class="col-md-6 mb-3" :campsite="campsite" :afficherBtnNavReservation="false"></CampsiteCard>
         <div class="col-md-6">
-            <div class="card shadow-sm">
+            <div v-if="authStore.isUserConnected()" class="card shadow-sm">
                 <div class="card-header bg-success text-white">
                     <h5 class="mb-0">Faire une réservation</h5>
                 </div>
@@ -40,6 +40,14 @@
                     <button class="btn btn-success w-100" @click="creerReservation">Confirmer la réservation</button>
                 </div>
             </div>
+            <div v-else class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Faire une réservation</h5>
+                </div>
+                <div class="card-body text-center">
+                    <router-link :to="{ name: 'login' }" class="btn btn-primary">Se connecter pour réserver</router-link>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -49,10 +57,12 @@ import { onMounted } from 'vue';
 import CampsiteCard from '@/components/CampsiteCard.vue';
 import { useCampsitesStore } from '@/stores/campsites.js';
 import { useReservationStore } from '@/stores/reservations.js';
+import { useAuthStore } from '@/stores/auth.js';
 import { storeToRefs } from 'pinia';
 
 const store = useCampsitesStore();
 const reservationsStore = useReservationStore();
+const authStore = useAuthStore();
 const { isLoading, campsite } = storeToRefs(store);
 const { reservationTemp, erreursAjoutReservation } = storeToRefs(reservationsStore);
 
@@ -62,7 +72,6 @@ const creerReservation = () => {
         console.log(reservationTemp.value);
         reservationsStore.postReservation(reservationTemp.value);
     }
-
 };
 
 const props = defineProps({

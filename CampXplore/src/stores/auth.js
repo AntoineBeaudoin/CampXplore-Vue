@@ -343,7 +343,7 @@ export const useAuthStore = defineStore('auth', () => {
   
   /**
    * Valide si l'utilisateur connecté est un administrateur
-   * @returns {boolean} Indique si l'utilisateur est connecté
+   * @returns {boolean} Indique si l'utilisateur est connecté comme un administrateur
    */
   function isUserAdmin() {
     const token = localStorage.getItem("jwt");
@@ -356,6 +356,19 @@ export const useAuthStore = defineStore('auth', () => {
     } catch {
       return false;
     }
+  }
+
+  
+  /**
+   * Valide si l'utilisateur connecté 
+   * @returns {boolean} Indique si l'utilisateur est connecté
+   */
+  function isUserConnected() {
+    const token = localStorage.getItem("jwt");
+    if (!token) {
+      return false;
+    }
+    return true;
   }
 
   return {
@@ -387,6 +400,7 @@ export const useAuthStore = defineStore('auth', () => {
     isUserAdmin,
     resetRegisterForm,
     resetModificationMdp,
-    resetChampsErreur
+    resetChampsErreur,
+    isUserConnected
   }
 })
