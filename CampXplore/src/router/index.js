@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { jwtDecode } from "jwt-decode";
+import { useAlertStore } from '@/stores/alert.js';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -108,6 +109,8 @@ router.beforeEach((to, from, next) => {
     try {
       const decoded = jwtDecode(token);
       if (decoded.role !== 'admin') {
+        const alertStore = useAlertStore();
+        alertStore.error("Vous n'avez pas les permissions nécessaires pour avoir accès à cette page", 3000);
         return next({ name: 'Home', query: { redirect: to.fullPath } });
       }
     } catch (err) {
