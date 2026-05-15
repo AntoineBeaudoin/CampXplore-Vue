@@ -8,27 +8,29 @@
                     <div class="col-12 mb-3">
                         <div>
                             <label for="email" class="form-label">Courriel:</label>
-                            <input type="email" id="courriel" name="email" class="form-control" v-model.trim="email" disabled>
+                            <input type="email" id="courriel" name="email" class="form-control" v-model.trim="email"
+                                disabled>
                         </div>
                     </div>
                     <div class="col-12 col-md-6">
                         <div>
                             <label for="prenom" class="form-label">Prénom:</label>
-                            <input type="text" id="prenom" name="prenom" class="form-control" v-model.trim="prenom">
+                            <input type="text" id="prenom" name="prenom" class="form-control" v-model.trim="tempPrenom">
                             <div v-if="prenomErrorMessage" class="text-danger">{{ prenomErrorMessage }}</div>
                         </div>
                     </div>
                     <div class="col-12 col-md-6">
                         <div>
                             <label for="nom" class="form-label">Nom:</label>
-                            <input type="text" id="nom" name="nom" class="form-control" v-model.trim="nom">
+                            <input type="text" id="nom" name="nom" class="form-control" v-model.trim="tempNom">
                             <div v-if="nomErrorMessage" class="text-danger">{{ nomErrorMessage }}</div>
                         </div>
-                    </div> 
+                    </div>
                     <div class="col-12 col-lg-9 mt-3">
                         <div>
                             <label for="telephone" class="form-label">Numéro de téléphone:</label>
-                            <input type="text" id="telephone" name="telephone" class="form-control" v-model.trim="telephone">
+                            <input type="text" id="telephone" name="telephone" class="form-control"
+                                v-model.trim="tempTelephone">
                             <div v-if="telephoneErrorMessage" class="text-danger">{{ telephoneErrorMessage }}</div>
                         </div>
                     </div>
@@ -40,8 +42,10 @@
                     </div>
                     <div class="col-12 mt-3">
                         <div class="d-flex justify-content-between align-items-center">
-                            <button type="submit" class="btn btn-primary" @click="submitFormProfile">Enregistrer</button>
-                            <button type="button" id="btn-reset" class="btn btn-danger" @click="resetFormProfile">Réinitialiser</button>
+                            <button type="submit" class="btn btn-primary"
+                                @click="submitFormProfile">Enregistrer</button>
+                            <button type="button" id="btn-reset" class="btn btn-danger"
+                                @click="resetFormProfile">Réinitialiser</button>
                         </div>
                     </div>
                 </form>
@@ -54,28 +58,35 @@
                     <div class="col-12">
                         <div>
                             <label for="currentPassword" class="form-label">Mot de passe courrant:</label>
-                            <input type="password" id="currentPassword" name="currentPassword" class="form-control" v-model.trim="currentPassword">
-                            <div v-if="currentPasswordErrorMessage" class="text-danger">{{ currentPasswordErrorMessage }}</div>
+                            <input type="password" id="currentPassword" name="currentPassword" class="form-control"
+                                v-model.trim="currentPassword">
+                            <div v-if="currentPasswordErrorMessage" class="text-danger">{{ currentPasswordErrorMessage
+                                }}</div>
                         </div>
                     </div>
                     <div class="col-12">
                         <div>
                             <label for="newPassword" class="form-label">Nouveau mot de passe:</label>
-                            <input type="password" id="newPassword" name="newPassword" class="form-control" v-model.trim="newPassword">
+                            <input type="password" id="newPassword" name="newPassword" class="form-control"
+                                v-model.trim="newPassword">
                             <div v-if="newPasswordErrorMessage" class="text-danger">{{ newPasswordErrorMessage }}</div>
                         </div>
                     </div>
                     <div class="col-12">
                         <div>
                             <label for="confirmPassword" class="form-label">Confirmer le mot de passe:</label>
-                            <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" v-model.trim="confirmPassword">
-                            <div v-if="confirmPasswordErrorMessage" class="text-danger">{{ confirmPasswordErrorMessage }}</div>
+                            <input type="password" id="confirmPassword" name="confirmPassword" class="form-control"
+                                v-model.trim="confirmPassword">
+                            <div v-if="confirmPasswordErrorMessage" class="text-danger">{{ confirmPasswordErrorMessage
+                                }}</div>
                         </div>
                     </div>
                     <div class="col-12 mt-3">
                         <div class="d-flex justify-content-between align-items-center">
-                            <button type="submit" class="btn btn-primary" @click="submitFormMdp">Modifier le mot de passe</button>
-                            <button type="button" id="btn-reset" class="btn btn-danger" @click="resetFormMdp">Réinitialiser</button>
+                            <button type="submit" class="btn btn-primary" @click="submitFormMdp">Modifier le mot de
+                                passe</button>
+                            <button type="button" id="btn-reset" class="btn btn-danger"
+                                @click="resetFormMdp">Réinitialiser</button>
                         </div>
                     </div>
                 </form>
@@ -94,7 +105,7 @@ const {
     email,
     prenom,
     nom,
-    telephone, 
+    telephone,
     role,
     nomErrorMessage,
     prenomErrorMessage,
@@ -104,13 +115,16 @@ const {
     confirmPassword,
     currentPasswordErrorMessage,
     newPasswordErrorMessage,
-    confirmPasswordErrorMessage
+    confirmPasswordErrorMessage,
+    tempPrenom,
+    tempNom,
+    tempTelephone
 } = storeToRefs(store);
 
 /**
  * Remet à l'état initiale le formulaire de modification du mot de passe
  */
-async function resetFormMdp(){
+async function resetFormMdp() {
     store.resetModificationMdp();
 }
 
@@ -124,7 +138,7 @@ async function submitFormMdp() {
 /**
  * Remet à l'état initiale le formulaire de modification du profile
  */
-async function resetFormProfile(){
+async function resetFormProfile() {
     await store.getProfile();
     store.resetChampsErreur();
 }
@@ -132,11 +146,14 @@ async function resetFormProfile(){
 /**
  * Appel l'API pour modifier les informations du compte
  */
-async function submitFormProfile(){
+async function submitFormProfile() {
     await store.majProfile();
 }
 
-onMounted(() => {
-  store.getProfile();
+onMounted(async () => {
+    await store.getProfile();
+    tempPrenom.value = prenom.value;
+    tempNom.value = nom.value;
+    tempTelephone.value = telephone.value;
 })
 </script>

@@ -7,7 +7,7 @@ import { useAlertStore } from '@/stores/alert.js';
 
 export const useAuthStore = defineStore('auth', () => {
   const MESSAGE_ERREUR_MDP = "Le mot de passe doit être au moins 10 charactère " +
-  "de long en ayant au moins une majuscule, un chiffre et un charactère spécial";
+    "de long en ayant au moins une majuscule, un chiffre et un charactère spécial";
 
   const alertStore = useAlertStore();
   const errorMessage = ref('');
@@ -22,6 +22,9 @@ export const useAuthStore = defineStore('auth', () => {
   const currentPassword = ref('');
   const newPassword = ref('');
   const confirmPassword = ref('');
+  const tempPrenom = ref('');
+  const tempNom = ref('');
+  const tempTelephone = ref('');
 
   const prenomErrorMessage = ref('');
   const nomErrorMessage = ref('');
@@ -40,7 +43,7 @@ export const useAuthStore = defineStore('auth', () => {
    */
   async function login() {
     resetChampsErreur();
-    if(!validerCourriel(email.value)){
+    if (!validerCourriel(email.value)) {
       emailErrorMessage.value = "Le format du courriel n'est pas valide";
       return false;
     }
@@ -63,7 +66,7 @@ export const useAuthStore = defineStore('auth', () => {
   /**
    * Vide le formulaire d'authentification
    */
-  function resetRegisterForm(){
+  function resetRegisterForm() {
     prenom.value = '';
     nom.value = '';
     email.value = '';
@@ -77,7 +80,7 @@ export const useAuthStore = defineStore('auth', () => {
   /**
    * Vide les messages d'erreur
    */
-  function resetChampsErreur(){
+  function resetChampsErreur() {
     errorMessage.value = '';
     prenomErrorMessage.value = '';
     nomErrorMessage.value = '';
@@ -87,11 +90,11 @@ export const useAuthStore = defineStore('auth', () => {
     pwdCErrorMessage.value = '';
   }
 
-  
+
   /** 
    * Vide le champs pour la modification du mot de passe 
    */
-  function resetModificationMdp(){
+  function resetModificationMdp() {
     currentPassword.value = "";
     newPassword.value = "";
     confirmPassword.value = "";
@@ -170,12 +173,12 @@ export const useAuthStore = defineStore('auth', () => {
     return isValid;
   }
 
-  
+
   /**
    * Valide que le courriel est valide
    * @returns {*} Indique si le courriel est valide
    */
-  function validerCourriel(email){
+  function validerCourriel(email) {
     return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
   }
 
@@ -204,10 +207,10 @@ export const useAuthStore = defineStore('auth', () => {
         resetRegisterForm();
         return true;
       } catch (err) {
-        if(/."status":409./.test(err)){
+        if (/."status":409./.test(err)) {
           alertStore.error("Cette adresse courriel est déjà utilisée.");
         }
-        else{
+        else {
           alertStore.error("Une erreur est survenue");
         }
         return false;
@@ -235,7 +238,7 @@ export const useAuthStore = defineStore('auth', () => {
       alertStore.error("Une erreur est survenue lors de l'obtention du profile utilisateur");
     }
   }
-  
+
   /**
    * Valide que le numéro de téléphone contient bien 10 chiffres
    * @returns {*} Booleen indiquant si le numéro de téléphone contient 10 chiffres
@@ -276,10 +279,9 @@ export const useAuthStore = defineStore('auth', () => {
           headers: {},
           body: JSON.stringify(
             {
-              firstName: prenom.value,
-              lastName: nom.value,
-              phone: telephone.value,
-              role: role.value
+              firstName: tempPrenom.value,
+              lastName: tempNom.value,
+              phone: tempTelephone.value
             })
         });
         alertStore.success("La mise à jours du profile a été effectué avec succèes!");
@@ -288,7 +290,7 @@ export const useAuthStore = defineStore('auth', () => {
       }
     }
   }
-  
+
   /**
    * Valide que le mot de passe est valide et affecte les variables d'erreurs en fonction de l'erreur
    * @returns {boolean} Indique si le mot de passe est valide
@@ -340,7 +342,7 @@ export const useAuthStore = defineStore('auth', () => {
       }
     }
   }
-  
+
   /**
    * Valide si l'utilisateur connecté est un administrateur
    * @returns {boolean} Indique si l'utilisateur est connecté comme un administrateur
@@ -358,7 +360,7 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  
+
   /**
    * Valide si l'utilisateur connecté 
    * @returns {boolean} Indique si l'utilisateur est connecté
@@ -401,6 +403,9 @@ export const useAuthStore = defineStore('auth', () => {
     resetRegisterForm,
     resetModificationMdp,
     resetChampsErreur,
-    isUserConnected
+    isUserConnected,
+    tempPrenom,
+    tempNom,
+    tempTelephone
   }
 })
