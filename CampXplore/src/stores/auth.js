@@ -361,6 +361,7 @@ export const useAuthStore = defineStore('auth', () => {
               newPassword: newPassword.value
             })
         });
+        resetModificationMdp();
         alertStore.success("La mise à jours du mot de passe a été effectué avec succèes!");
       } catch (err) {
         alertStore.error("Une erreur est survenue lors de la mise à jours du mot de passe");
