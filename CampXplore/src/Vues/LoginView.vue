@@ -35,6 +35,9 @@ const { email, pwd, errorMessage, emailErrorMessage } = storeToRefs(store);
 
 const router = useRouter();
 
+/**
+ * Gère l'appel à l'API et redirige vers / en cas de succès
+ */
 async function login() {
     try {
         const connEsSuccees = await store.login();

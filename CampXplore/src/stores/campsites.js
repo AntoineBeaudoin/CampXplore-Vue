@@ -2,8 +2,6 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { apiFetch } from '@/utils/apiFetch.js';
 import { useAlertStore } from '@/stores/alert.js';
-import { useAuthStore } from './auth';
-
 
 export const useCampsitesStore = defineStore('campsites', () => {
   const alertStore = useAlertStore();
@@ -114,7 +112,6 @@ export const useCampsitesStore = defineStore('campsites', () => {
     }
     return true;
   }
-
   
   /**
    * Valider que la longueur du véhicule est valide
@@ -237,7 +234,6 @@ export const useCampsitesStore = defineStore('campsites', () => {
     }
   }
 
-
   /**
    * Modifier un campsite
    * @async Attend la réponse de l'api
@@ -269,7 +265,6 @@ export const useCampsitesStore = defineStore('campsites', () => {
       }
     }
   }
-
   
   /**
    * Ajouter un emplacement

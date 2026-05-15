@@ -52,6 +52,12 @@ export const useReservationStore = defineStore('reservations', () => {
         maxVehicleLength: false,
     });
 
+    
+    /**
+     * Obtient tous les réservations (pour utilisateur et admin)
+     * @async Attend la réponse de l'API
+     * @returns {*} Message d'erreur s'il y a lieu
+     */
     async function getReservations() {
         reservations.value = [];
         try {
@@ -70,6 +76,13 @@ export const useReservationStore = defineStore('reservations', () => {
         }
     }
 
+    
+    /**
+     * Obtenir la réservation via son ID
+     * @async Attend la réponse de l'API
+     * @param {*} id Id de la réservation à trouver
+     * @returns {*} Message d'erreur si besoin
+     */
     async function getReservationById(id) {
         reservation.value = {};
         try {
@@ -91,6 +104,12 @@ export const useReservationStore = defineStore('reservations', () => {
         }
     }
 
+    /**
+     * Met à jours le statut de la réservation
+     * @async Attend la réponse de l'API
+     * @param {*} newStatus Le nouveau statut
+     * @returns {*} Message indiquant le succès de la requête
+     */
     async function patchReservationStatut(newStatus) {
         try {
             isLoading.value = true;
@@ -117,6 +136,13 @@ export const useReservationStore = defineStore('reservations', () => {
         }
     }
 
+    /**
+     * Met à jours via un appel à l'API le statut d'une réservation
+     * @async Attend la réponse de l'API
+     * @param {*} newStatus Le nouveau statut
+     * @param {*} reservationId L'id de la réservation à modifier
+     * @returns {*} Message témoignant du succès de la requête
+     */
     async function patchReservationStatutFromList(newStatus, reservationId) {
         try {
             isLoading.value = true;
@@ -140,7 +166,12 @@ export const useReservationStore = defineStore('reservations', () => {
             isLoading.value = false;
         }
     }
-
+    
+    /**
+     * Fait un appel à l'API pour trouver les reservations qui respectent les critères du filtre
+     * @async Attend la réponse de l'API
+     * @returns {*} Les données filtrés ou un message d'erreur
+     */
     async function getReservationsFiltre() {
         let url = '/api/reservations';
         if (typeStatut.value) {
@@ -155,7 +186,7 @@ export const useReservationStore = defineStore('reservations', () => {
             });
             reservations.value = fetched.data;
         } catch (err) {
-            alertStore.error(err);
+            alertStore.error("Une erreur est survenue lors du chargement des données filtrés");
         }
         finally {
             isLoading.value = false;
@@ -258,7 +289,6 @@ export const useReservationStore = defineStore('reservations', () => {
         }
     }
 
-    
     /**
      * Détermine quel couleur mettre la pastille de type de camping
      * @param {*} status Le type de camping

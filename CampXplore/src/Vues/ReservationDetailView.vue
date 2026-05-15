@@ -71,10 +71,10 @@
                 </div>
                 <div>
                     <button v-if="reservation.status === 'pending'" @click="modifierStatutReservation('cancelled')" class="btn btn-danger mt-3 w-100">Annuler</button>
-                    <button v-if="reservation.status === 'pending' && isUserAdmin()" @click="modifierStatutReservation('confirmed')" class="btn btn-primary mt-3 w-100">Confirmer</button>
-                    <button v-if="reservation.status === 'confirmed' && isUserAdmin()" @click="modifierStatutReservation('pending')" class="btn btn-warning mt-3 w-100">Remettre en attente</button>
-                    <button v-if="reservation.status === 'confirmed' && isUserAdmin()" @click="modifierStatutReservation('cancelled')" class="btn btn-danger mt-3 w-100">Annuler</button>
-                    <button v-if="reservation.status === 'cancelled' && isUserAdmin()" @click="modifierStatutReservation('pending')" class="btn btn-warning mt-3 w-100">Remettre en attente</button>
+                    <button v-if="reservation.status === 'pending' && authStore.isUserAdmin()" @click="modifierStatutReservation('confirmed')" class="btn btn-primary mt-3 w-100">Confirmer</button>
+                    <button v-if="reservation.status === 'confirmed' && authStore.isUserAdmin()" @click="modifierStatutReservation('pending')" class="btn btn-warning mt-3 w-100">Remettre en attente</button>
+                    <button v-if="reservation.status === 'confirmed' && authStore.isUserAdmin()" @click="modifierStatutReservation('cancelled')" class="btn btn-danger mt-3 w-100">Annuler</button>
+                    <button v-if="reservation.status === 'cancelled' && authStore.isUserAdmin()" @click="modifierStatutReservation('pending')" class="btn btn-warning mt-3 w-100">Remettre en attente</button>
                     <RouterLink class="btn btn-secondary mt-3 w-100" :to="{ name: 'reservations' }">Retour aux réservations</RouterLink>
                 </div>
             </div>
@@ -134,10 +134,10 @@ const props = defineProps({
     }
 });
 
-function isUserAdmin(){
-    return authStore.isUserAdmin();
-}
-
+/**
+ * Modifie le statut d'une réservation en faissant appel à l'API
+ * @param nouveauStatut Nouveau statut de la réservation
+ */
 async function modifierStatutReservation(nouveauStatut){
     await store.patchReservationStatut(nouveauStatut);
 }

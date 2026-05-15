@@ -86,6 +86,11 @@ const {
     typeStatut
 } = storeToRefs(store);
 
+/**
+ * Modifie le statut d'une réservation
+ * @param nouveauStatut Le nouveau statut
+ * @param id Id de la réservation
+ */
 async function modifierStatutReservation(nouveauStatut, id) {
     await store.patchReservationStatutFromList(nouveauStatut, id);
 }

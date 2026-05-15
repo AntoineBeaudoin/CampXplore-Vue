@@ -4,7 +4,6 @@ import { apiFetch } from '@/utils/apiFetch.js';
 import { jwtDecode } from "jwt-decode";
 import { useAlertStore } from '@/stores/alert.js';
 
-
 export const useAuthStore = defineStore('auth', () => {
   const MESSAGE_ERREUR_MDP = "Le mot de passe doit être au moins 10 charactère " +
     "de long en ayant au moins une majuscule, un chiffre et un charactère spécial";
@@ -89,7 +88,6 @@ export const useAuthStore = defineStore('auth', () => {
     pwdErrorMessage.value = '';
     pwdCErrorMessage.value = '';
   }
-
 
   /** 
    * Vide le champs pour la modification du mot de passe 
@@ -185,7 +183,6 @@ export const useAuthStore = defineStore('auth', () => {
     return isValid;
   }
 
-
   /**
    * Valide que le courriel est valide
    * @returns {*} Indique si le courriel est valide
@@ -252,7 +249,6 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  
   /** Sert à initier les valeurs temporaires */
   function setValeursTemp(){
     tempPrenom.value = prenom.value;
@@ -385,7 +381,6 @@ export const useAuthStore = defineStore('auth', () => {
       return false;
     }
   }
-
 
   /**
    * Valide si l'utilisateur connecté 

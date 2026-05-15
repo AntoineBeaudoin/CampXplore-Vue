@@ -47,11 +47,17 @@ const {
   typeCampsite
 } = storeToRefs(store);
 
+/**
+ * Reset le filtre
+ */
 const resetForm = async () => {
   typeCampsite.value = '';
   await store.getCampsites();
 }
 
+/**
+ * Fait un appel à l'API pour soumettre le formulaire de filtre
+ */
 async function submitForm() {
   await store.getCampsitesFiltre();
 }

@@ -60,10 +60,19 @@ const {
     reservations,
 } = storeToRefs(store);
 
-const peutAnnuler = (status) => {
-    return status === 'pending';
+/**
+ * Valide que l'annulation de la réservation est possible
+ * @param statut Le statut actuel de la réservation
+ */
+const peutAnnuler = (statut) => {
+    return statut === 'pending';
 }
 
+/**
+ * Fait un appel à l'API pour modifier le statut de la réservation
+ * @param nouveauStatut Le nouveau statut de la réservation
+ * @param id L'id de la réservation à modifier
+ */
 async function modifierStatutReservation(nouveauStatut, id) {
     await store.patchReservationStatutFromList(nouveauStatut, id);
 }

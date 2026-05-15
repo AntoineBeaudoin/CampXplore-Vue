@@ -92,6 +92,9 @@ const {
   vehicleLengthErrorMessage
 } = storeToRefs(store);
 
+/**
+ * Vide les valeurs de recherche de campsites
+ */
 const resetForm = async () => {
   dateDebut.value = '';
   dateFin.value = '';
@@ -101,6 +104,9 @@ const resetForm = async () => {
   vehicleLength.value = '';
 }
 
+/**
+ * Fait un appel à l'API pour soumettre le formulaire
+ */
 async function submitForm() {
   await store.getCampsitesRecherche();
 }
