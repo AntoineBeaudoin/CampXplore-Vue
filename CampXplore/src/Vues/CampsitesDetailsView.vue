@@ -1,5 +1,8 @@
 <template>
     <p v-if="isLoading">Chargement en cours...</p>
+    <div v-if="campsite" class="mb-3">
+        <RouterLink class="link-info" :to="{ name: 'Campsites' }">Réservations</RouterLink> / {{ campsite.name }}
+    </div>
     <div class="row">
         <CampsiteCard class="col-md-6 mb-3" :campsite="campsite" :afficherBtnNavReservation="false"></CampsiteCard>
         <div class="col-md-6">
