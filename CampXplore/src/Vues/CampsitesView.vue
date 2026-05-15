@@ -27,6 +27,7 @@
     <p v-if="isLoading" class="col-12">Chargement en cours...</p>
     <p v-else-if="errorMessage" class="col-12 text-danger">{{ errorMessage }}</p>
     <p v-else-if="campsites.length === 0" class="col-12">Aucun campsite</p>
+    <p v-if="campsites.length > 0" class="p-0 m-0 ms-3">Nombre d'emplacements trouvé: {{ campsites.length }}</p>
     <CampsiteCard class="col-12 col-lg-4" v-for="campsite in campsites" :key="campsite._id" :campsite="campsite">
     </CampsiteCard>
   </div>
