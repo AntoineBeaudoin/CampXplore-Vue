@@ -37,6 +37,9 @@
                             m.
                         </div>
                     </div>
+                    <div v-if="prixCourrant && prixCourrant > 0">
+                        <p>Le prix de votre réservation sera de: {{ prixCourrant }}.00$</p>
+                    </div>
                     <button class="btn btn-success w-100" @click="creerReservation">Confirmer la réservation</button>
                 </div>
             </div>
@@ -64,12 +67,11 @@ const store = useCampsitesStore();
 const reservationsStore = useReservationStore();
 const authStore = useAuthStore();
 const { isLoading, campsite } = storeToRefs(store);
-const { reservationTemp, erreursAjoutReservation } = storeToRefs(reservationsStore);
+const { reservationTemp, erreursAjoutReservation, prixCourrant } = storeToRefs(reservationsStore);
 
 const creerReservation = () => {
     if (reservationsStore.validerAjoutReservation(campsite.value)) {
         reservationTemp.value.campsite = campsite.value._id;
-        console.log(reservationTemp.value);
         reservationsStore.postReservation(reservationTemp.value);
     }
 };
@@ -83,5 +85,6 @@ const props = defineProps({
 
 onMounted(async () => {
     await store.getCampsite(props.id);
+    reservationTemp.value.pricePerNight = campsite.value.pricePerNight;
 })
 </script>

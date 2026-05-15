@@ -1,4 +1,4 @@
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { apiFetch } from '@/utils/apiFetch.js';
 import { useRouter } from 'vue-router';
@@ -14,6 +14,43 @@ export const useReservationStore = defineStore('reservations', () => {
     const reservation = ref({});
     const router = useRouter();
     const route = useRoute();
+
+    /**
+     * Calcule le prix courrant de la réservation
+     * @type {*} Le montant de la réservation
+     */
+    const prixCourrant = computed(() => {
+        if (!reservationTemp.value.startDate || !reservationTemp.value.endDate || !reservationTemp.value?.pricePerNight) {
+            return 0
+        }
+        const msParJour = 1000 * 60 * 60 * 24;
+        const nbJours = (new Date(reservationTemp.value.endDate) - new Date(reservationTemp.value.startDate)) / msParJour;
+        return nbJours * reservationTemp.value.pricePerNight;
+    })
+
+    /**
+     * Réservation temporaire représentant la réservation à ajouter
+     * @type {*} Réservation
+     */
+    const reservationTemp = ref({
+        campsite: "",
+        startDate: "",
+        endDate: "",
+        guests: "",
+        maxVehicleLength: null,
+        pricePerNight: 0
+    });
+
+    /**
+     * Indique les erreures dans la création d'une réservation
+     * @type {*} Références d'erreurs
+     */
+    const erreursAjoutReservation = ref({
+        startDate: false,
+        endDate: false,
+        guests: false,
+        maxVehicleLength: false,
+    });
 
     async function getReservations() {
         reservations.value = [];
@@ -126,29 +163,6 @@ export const useReservationStore = defineStore('reservations', () => {
     }
 
     /**
-     * Réservation temporaire représentant la réservation à ajouter
-     * @type {*} Réservation
-     */
-    const reservationTemp = ref({
-        campsite: "",
-        startDate: "",
-        endDate: "",
-        guests: "",
-        maxVehicleLength: null,
-    });
-
-    /**
-     * Indique les erreures dans la création d'une réservation
-     * @type {*} Références d'erreurs
-     */
-    const erreursAjoutReservation = ref({
-        startDate: false,
-        endDate: false,
-        guests: false,
-        maxVehicleLength: false,
-    });
-
-    /**
      * Valide que la date de début de la réservation est valide pour sa création
      * @param {*} dDebut Date de début
      * @param {*} aujourdHui Date d'ajourd'hui
@@ -255,6 +269,7 @@ export const useReservationStore = defineStore('reservations', () => {
         postReservation,
         validerAjoutReservation,
         erreursAjoutReservation,
-        reservationTemp
+        reservationTemp,
+        prixCourrant
     }
 })
