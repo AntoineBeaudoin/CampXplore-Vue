@@ -103,9 +103,6 @@ import { storeToRefs } from 'pinia';
 const store = useAuthStore();
 const {
     email,
-    prenom,
-    nom,
-    telephone,
     role,
     nomErrorMessage,
     prenomErrorMessage,
@@ -152,8 +149,5 @@ async function submitFormProfile() {
 
 onMounted(async () => {
     await store.getProfile();
-    tempPrenom.value = prenom.value;
-    tempNom.value = nom.value;
-    tempTelephone.value = telephone.value;
 })
 </script>

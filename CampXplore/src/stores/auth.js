@@ -118,12 +118,24 @@ export const useAuthStore = defineStore('auth', () => {
       nomErrorMessage.value = "Le nom ne peut pas être vide";
       isValid = false;
     }
+    if (!tempNom.value) {
+      prenomErrorMessage.value = "Le prénom ne peut pas être vide";
+      isValid = false;
+    }
+    if (!tempPrenom.value) {
+      nomErrorMessage.value = "Le nom ne peut pas être vide";
+      isValid = false;
+    }
     if (!email.value) {
       emailErrorMessage.value = "Le courriel ne peut pas être vide";
       isValid = false;
     }
     if (!telephone.value) {
-      prenomErrorMessage.value = "Le téléphone ne peut pas être vide";
+      telephoneErrorMessage.value = "Le téléphone ne peut pas être vide";
+      isValid = false;
+    }
+    if (!tempTelephone.value) {
+      telephoneErrorMessage.value = "Le téléphone ne peut pas être vide";
       isValid = false;
     }
     return isValid;
@@ -159,7 +171,7 @@ export const useAuthStore = defineStore('auth', () => {
       isValid = false;
       emailErrorMessage.value = "Le courriel n'a pas le bon format";
     }
-    if (!validerTelephoneContient10Chiffres()) {
+    if (!validerTelephoneContient10Chiffres(telephone.value)) {
       isValid = false;
       telephoneErrorMessage.value = "Le numéro de téléphone doit contenir 10 chiffres";
     }
@@ -234,17 +246,27 @@ export const useAuthStore = defineStore('auth', () => {
       email.value = fetched.data.email;
       telephone.value = fetched.data.phone;
       role.value = fetched.data.role;
+      setValeursTemp();
     } catch (err) {
       alertStore.error("Une erreur est survenue lors de l'obtention du profile utilisateur");
     }
   }
 
+  
+  /** Sert à initier les valeurs temporaires */
+  function setValeursTemp(){
+    tempPrenom.value = prenom.value;
+    tempNom.value = nom.value;
+    tempTelephone.value = telephone.value;
+  }
+
   /**
    * Valide que le numéro de téléphone contient bien 10 chiffres
+   * @param {*} telephone Numéro de téléphone à valider
    * @returns {*} Booleen indiquant si le numéro de téléphone contient 10 chiffres
    */
-  function validerTelephoneContient10Chiffres() {
-    return /\d{10}/.test(telephone.value);
+  function validerTelephoneContient10Chiffres(telephone) {
+    return /\d{10}/.test(telephone) && telephone.length === 10;
   }
 
   /**
@@ -255,7 +277,7 @@ export const useAuthStore = defineStore('auth', () => {
     resetChampsErreur();
     let isValid = validerChampsNonVides();
 
-    if (!validerTelephoneContient10Chiffres()) {
+    if (!validerTelephoneContient10Chiffres(tempTelephone.value)) {
       isValid = false;
       telephoneErrorMessage.value = "Le numéro de téléphone doit contenir 10 chiffres";
     }
