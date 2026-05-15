@@ -16,7 +16,8 @@
             </thead>
             <tbody>
                 <tr v-if="reservations.length === 0">
-                    <td>Aucune réservations...</td>
+                    <td>Aucune réservations... <router-link to="/campsites"
+                            class=" link-info">trouver des endroits où réserver</router-link></td>
                     <td>--</td>
                     <td>--</td>
                     <td>--</td>
