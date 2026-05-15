@@ -1,7 +1,7 @@
 <template>
     <div class="mb-4 border border-3 rounded-3 p-3 w-50 m-auto">
         <h1 class="text-center border-bottom pb-2">S'inscrire</h1>
-        <form id="formulaire-Register" @submit.prevent="">
+        <form id="formulaire-Register" @submit.prevent="" novalidate="">
             <div class="row">
                 <div class="col-lg-6 p-3">
                     <div>
