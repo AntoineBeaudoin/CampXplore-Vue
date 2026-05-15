@@ -1,4 +1,4 @@
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { apiFetch } from '@/utils/apiFetch.js';
 import { useAlertStore } from '@/stores/alert.js';
@@ -17,10 +17,12 @@ export const useCampsitesStore = defineStore('campsites', () => {
   const dateFin = ref('');
   const nbPlacesMin = ref('');
   const typeCampsite = ref('');
+  const vehicleLength = ref('');
 
   const dateDebutErrorMessage = ref('');
   const dateFinErrorMessage = ref('');
   const nbPlacesMinErrorMessage = ref('');
+  const vehicleLengthErrorMessage = ref('');
 
   /**
    * Retourne la liste de tous les campsites
@@ -92,7 +94,7 @@ export const useCampsitesStore = defineStore('campsites', () => {
         isValid = false;
         dateDebutErrorMessage.value = "La date d'arrivée doit être plus tard que la date d'aujourd'hui";
       }
-      if (fin < debut) {
+      if (fin <= debut) {
         isValid = false;
         dateFinErrorMessage.value = "La date de départ doit être plus tard que la date d'arrivée";
       }
@@ -113,12 +115,27 @@ export const useCampsitesStore = defineStore('campsites', () => {
     return true;
   }
 
+  
+  /**
+   * Valider que la longueur du véhicule est valide
+   * @returns {boolean} Bool indiquant si la longuer du véhicule est valide
+   */
+  function validerVehicleLength(){
+    vehicleLengthErrorMessage.value = "";
+    if (typeCampsite.value === 'vr'){
+      if (vehicleLength.value < 0){
+        vehicleLengthErrorMessage.value = "La longueur du véhicule ne peut pas être négative";
+      }
+    } 
+    return true;
+  }
+
   /**
    * Valide le formulaire (nombre de places valides et dates valides)
    * @returns {boolean} 
    */
   function validateForm() {
-    const isValid = validerNbPlaces() && validerDate();
+    const isValid = validerNbPlaces() && validerDate() && validerVehicleLength();
     return isValid;
   }
 
@@ -137,7 +154,15 @@ export const useCampsitesStore = defineStore('campsites', () => {
       if (nbPlacesMin.value) {
         url = url + `&guests=${nbPlacesMin.value}`;
       }
-      if (typeCampsite.value) {
+      if (typeCampsite.value && typeCampsite.value === 'vr') {
+        if (vehicleLength.value && vehicleLength.value > 0){
+          url = url + `&vehicleLength=${vehicleLength.value}&type=vr`;
+        }
+        else{
+          url = url + `&type=${typeCampsite.value}`;
+        }
+      }
+      else if (typeCampsite.value){
         url = url + `&type=${typeCampsite.value}`;
       }
     }
@@ -286,6 +311,8 @@ export const useCampsitesStore = defineStore('campsites', () => {
     supprimerUnCampsite,
     modifierUnCampsite,
     campingExisteDeja,
-    ajouterUnCampsite
+    ajouterUnCampsite,
+    vehicleLength,
+    vehicleLengthErrorMessage
   }
 })
