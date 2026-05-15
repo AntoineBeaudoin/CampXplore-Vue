@@ -108,7 +108,7 @@ router.beforeEach((to, from, next) => {
     try {
       const decoded = jwtDecode(token);
       if (decoded.role !== 'admin') {
-        return next({ name: 'forbidden', query: { redirect: to.fullPath } });
+        return next({ name: 'Home', query: { redirect: to.fullPath } });
       }
     } catch (err) {
       localStorage.removeItem('jwt');
