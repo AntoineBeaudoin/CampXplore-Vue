@@ -274,7 +274,7 @@ export const useAuthStore = defineStore('auth', () => {
     errorMessage.value = "";
     if (validerMajProfile()) {
       try {
-        await apiFetch('/api/auth/profile', {
+        const res = await apiFetch('/api/auth/profile', {
           method: 'PUT',
           headers: {},
           body: JSON.stringify(
@@ -284,6 +284,9 @@ export const useAuthStore = defineStore('auth', () => {
               phone: tempTelephone.value
             })
         });
+        prenom.value = res.data.firstName;
+        nom.value = res.data.lastName;
+        telephone.value = res.data.phone;
         alertStore.success("La mise à jours du profile a été effectué avec succèes!");
       } catch (err) {
         alertStore.error("Une erreur est survenue lors de la mise à jours du profile utilisateur");

@@ -3,7 +3,7 @@
         <div class="container">
             <div>
                 <router-link to="/" class="navbar-brand d-inline-block"><strong>CampXplore</strong></router-link>
-                <p v-if="isUserConnexionValid" class="nav-link mb-0 d-inline-block">Bonjours {{ prenom }} {{ nom }}</p>
+                <p v-if="isUserConnexionValid" class="nav-link mb-0 d-inline-block">Bonjours {{ comPrenom }} {{ comNom }}</p>
             </div>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMenu">
                 <span class="navbar-toggler-icon"></span>
@@ -73,6 +73,9 @@ const tokenRef = ref(getToken());
 
 const isLogged = computed(() => tokenRef.value)
 const route = useRoute();
+
+const comPrenom = computed(() => prenom.value);
+const comNom = computed(() => nom.value);
 
 watch(route, () => {
     tokenRef.value = getToken();
