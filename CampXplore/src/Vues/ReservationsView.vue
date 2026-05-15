@@ -31,7 +31,7 @@
                     <td>{{ item.guests }}</td>
                     <td>{{ item.totalPrice }}$</td>
                     <td>
-                        <span class="badge" :class="classeStatus(item.status)">
+                        <span class="badge" :class="store.classeStatus(item.status)">
                             {{ item.status }}
                         </span>
                     </td>
@@ -58,17 +58,6 @@ const {
     isLoading,
     reservations,
 } = storeToRefs(store);
-
-function classeStatus(status) {
-    switch (status) {
-        case "confirmed":
-            return "bg-success";
-        case "cancelled":
-            return "bg-secondary";
-        default:
-            return "bg-warning text-dark";
-    }
-}
 
 const peutAnnuler = (status) => {
     return status === 'pending';

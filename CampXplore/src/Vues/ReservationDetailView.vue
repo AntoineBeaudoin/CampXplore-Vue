@@ -9,7 +9,7 @@
                 <div class="row col-12 bg-info border rounded w-100 m-0 pt-3">
                     <p class="col-sm-6">
                         <strong>Réservation</strong>
-                        <span class="badge ms-3" :class="classeStatus(reservation.status)">{{ reservation.status
+                        <span class="badge ms-3" :class="store.classeStatus(reservation.status)">{{ reservation.status
                             }}</span>
                     </p>
                     <p class="col-sm-6">#{{ reservation._id }}</p>
@@ -133,17 +133,6 @@ const props = defineProps({
         required: true,
     }
 });
-
-function classeStatus(status) {
-    switch (status) {
-        case "confirmed":
-            return "bg-success";
-        case "cancelled":
-            return "bg-secondary";
-        default:
-            return "bg-warning text-dark";
-    }
-}
 
 function isUserAdmin(){
     return authStore.isUserAdmin();

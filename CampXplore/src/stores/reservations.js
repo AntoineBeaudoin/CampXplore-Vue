@@ -258,6 +258,23 @@ export const useReservationStore = defineStore('reservations', () => {
         }
     }
 
+    
+    /**
+     * Détermine quel couleur mettre la pastille de type de camping
+     * @param {*} status Le type de camping
+     * @returns {("bg-success" | "bg-danger" | "bg-warning text-dark")} Classe à afficher
+     */
+    function classeStatus(status) {
+        switch (status) {
+            case "confirmed":
+                return "bg-success";
+            case "cancelled":
+                return "bg-danger";
+            default:
+                return "bg-warning text-dark";
+        }
+    }
+
     return {
         getReservations,
         isLoading,
@@ -272,6 +289,7 @@ export const useReservationStore = defineStore('reservations', () => {
         validerAjoutReservation,
         erreursAjoutReservation,
         reservationTemp,
-        prixCourrant
+        prixCourrant,
+        classeStatus
     }
 })
